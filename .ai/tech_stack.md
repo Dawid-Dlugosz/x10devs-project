@@ -8,7 +8,7 @@ Frontend - Flutter + Dart:
 - fpDart 1.2.0 - biblioteka, która zapewnia lepsze zarządzanie błędami i obsługa ich (https://pub.dev/packages/fpdart)
 - getIt 8.3.0 - bibliteka która tworzy depenency injection (https://pub.dev/packages/get_it)
 - injectable 2.5.2 - słuzy do lepszego zarządzania getIt i robi to automatycznnie (https://pub.dev/packages/injectable)
-
+- go_router 16.3.0 - biblioteka do zarządzania routingiem w aplikacji, wspierana przez zespół Fluttera (https://pub.dev/packages/go_router)
 
 
 Backend - Supabase zapewni dostęp do bazy + autoryzację 

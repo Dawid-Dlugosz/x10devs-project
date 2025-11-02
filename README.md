@@ -36,6 +36,7 @@ The project is built with a modern, scalable tech stack:
 |               | [shadcn_flutter](https://pub.dev/packages/shadcn_flutter)                         | A port of the shadcn/ui library for creating beautiful UIs.                 |
 | **State Mngmt** | [BLoC/Cubit](https://pub.dev/packages/bloc) `9.1.0`                               | Predictable state management library for Dart.                              |
 |               | [Freezed](https://pub.dev/packages/freezed) `3.2.3`                               | Code generator for immutable classes and unions.                            |
+| **Routing**   | [go_router](https://pub.dev/packages/go_router) `14.2.0`                          | Declarative routing package for Flutter, supported by the Flutter team.     |
 | **Networking**| [Dio](https://pub.dev/packages/dio) `5.9.0`                                       | A powerful HTTP client for Dart.                                            |
 | **DI**        | [get_it](https://pub.dev/packages/get_it) `8.3.0` & [injectable](https://pub.dev/packages/injectable) `2.5.2` | Service locator for dependency injection.                                   |
 | **Error Hndl**| [fpdart](https://pub.dev/packages/fpdart) `1.2.0`                                 | Functional programming library for robust error handling.                   |
