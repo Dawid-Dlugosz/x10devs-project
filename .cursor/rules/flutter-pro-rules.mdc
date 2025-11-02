@@ -1,0 +1,219 @@
+---
+alwaysApply: true
+---
+
+
+# AI Rules for Flutter + Dart Stack
+
+This document defines the coding and architectural guidelines for a Flutter project using modern tools and best practices.  
+All AI-generated code, refactoring, and corrections must comply with these rules to ensure consistency, scalability, and maintainability.
+
+---
+
+## 🧩 Tech Stack
+
+**Frontend – Flutter + Dart:**
+
+- **Flutter 3.5** — Framework for building beautiful UI and animations quickly.
+- **Dart 3.9** — Language used for Flutter logic and business code.
+- **shadcn/ui 0.0.46** — UI component library adapted for Flutter (https://pub.dev/packages/shadcn_flutter).
+- **BLoC 9.1.0** — State management library, primarily using Cubit (https://pub.dev/packages/bloc).
+- **Freezed 3.2.3** — Library for creating immutable objects and serialization (https://pub.dev/packages/freezed).
+- **Dio 5.9.0** — HTTP client for API communication (https://pub.dev/packages/dio).
+- **fpDart 1.2.0** — Functional programming library for better error and data handling (https://pub.dev/packages/fpdart).
+- **getIt 8.3.0** — Dependency injection service locator (https://pub.dev/packages/get_it).
+- **injectable 2.5.2** — Tool for automating dependency injection management with getIt (https://pub.dev/packages/injectable).
+
+---
+
+## 📁 Project Structure
+
+The project should follow the structure below. When introducing changes, this section must be updated accordingly.
+
+```
+aplikacja_dart/
+├── lib/                             # Main production code
+│   ├── core/                        # Shared components (errors, utils, DI)
+│   │   ├── errors/                  # Error definitions (e.g., Failure)
+│   │   └── utils/                   # Utility functions
+│   │
+│   └── features/                    # Application features (modules)
+│       └── <feature_name>/          # e.g. login, products
+│           ├── data/                # DATA layer (repository implementations, data sources)
+│           │   ├── data_sources/    # API, database, local storage
+│           │   ├── models/          # Data models for the data layer
+│           │   └── repositories/    # Repository implementations
+│           │
+│           ├── domain/              # DOMAIN layer (business logic, abstractions)
+│           │   ├── entities/        # Business entities (pure data models)
+│           │   ├── repositories/    # Abstract repository definitions (interfaces)
+│           │
+│           └── presentation/        # PRESENTATION layer (UI and state management)
+│               ├── bloc/            # State management (BLoC, Cubit, etc.)
+│               ├── pages/           # Screens and views
+│               └── widgets/         # UI components
+```
+
+---
+
+## 🧠 General Guidelines for Clean Code
+
+### Principles
+
+- Use **English** for all code, comments, and documentation.
+- Always declare **types** for variables, function parameters, and return values.  
+  Avoid `dynamic` or `any` unless strictly necessary.
+- Do not leave blank lines inside functions.
+- Follow **one export per file** convention.
+- Maintain small, focused functions — less than 20 statements.
+- Functions must perform a **single responsibility**.
+- Use **early return** to avoid deep nesting.
+- Use **guard clauses** for preconditions and invalid states.
+- Avoid unnecessary `else` blocks — prefer `if-return` pattern.
+- Keep each class small and focused — under 200 lines and <10 methods.
+
+### Naming Conventions
+
+- **PascalCase** → Classes
+- **camelCase** → Variables, functions, methods
+- **snake_case** → File and folder names
+- **UPPER_CASE** → Constants and environment variables
+- Boolean variables should start with a verb (`is`, `has`, `can`).
+- Always use **full words**, avoid abbreviations (except for standard ones like API, URL, ctx).
+
+---
+
+## 🏗️ Architecture Principles
+
+### Clean Architecture (Feature-First)
+
+Follow Clean Architecture with a **feature-first** organization pattern.
+
+- The project is divided into **Presentation**, **Domain**, and **Data** layers.
+- Dependencies always point **inward** (Data → Domain → Presentation).
+- Each feature is self-contained and includes its own layers.
+- Shared resources are placed under `core/`.
+- Prefer **composition over inheritance**.
+- Use abstract classes or interfaces to define contracts.
+- Maintain strict separation of concerns.
+
+### Recommended Feature Structure
+
+```
+lib/
+├── core/
+│   ├── errors/
+│   ├── utils/
+│   └── di/
+└── features/
+    └── example_feature/
+        ├── data/
+        │   ├── data_sources/
+        │   ├── models/
+        │   └── repositories/
+        ├── domain/
+        │   ├── entities/
+        │   ├── repositories/
+        └── presentation/
+            ├── bloc/
+            ├── pages/
+            └── widgets/
+```
+
+---
+
+## ⚙️ State Management (BLoC + Freezed)
+
+- Use **Cubit** for simple states and **Bloc** for event-driven logic.
+- All states must be **immutable** and defined with **Freezed**.
+- Prefer **union types** (`initial`, `loading`, `success`, `error`) to handle multiple UI states.
+- Avoid business logic in widgets — handle it inside Blocs or Cubits.
+- Use **BlocBuilder** and **BlocListener** with conditions (`buildWhen`, `listenWhen`) for optimization.
+- Use **copyWith()** for state transitions.
+- Always explicitly handle loading, success, and error states.
+
+---
+
+## 🧩 Dependency Injection (getIt + injectable)
+
+- Use **getIt** as a service locator for DI.
+- Use **injectable** for automatic dependency generation and registration.
+- Register dependencies per feature/module.
+- Use:
+  - `lazySingleton` for shared services or repositories.
+  - `factory` for short-lived instances like blocs or use cases.
+  - `singleton` only when global instance is absolutely necessary.
+- Keep DI configuration modular — one file per feature.
+
+---
+
+## 🚨 Error Handling (fpDart + Failures)
+
+- Use **Either<Failure, T>** for functional error handling.
+- Define a base `Failure` class and extend it for specific cases (`ServerFailure`, `CacheFailure`, etc.).
+- Map exceptions between layers (Data → Domain → Presentation).
+- Avoid throwing exceptions in business logic — use result objects.
+- Centralize error handling strategy for consistent behavior.
+- Use the `fold()` method to handle success/failure outcomes in one place.
+
+Example:
+
+```dart
+result.fold(
+  (failure) => emit(UserState.error(failure)),
+  (user) => emit(UserState.loaded(user)),
+);
+```
+
+---
+
+## 🧪 Testing Guidelines
+
+- Follow **Arrange – Act – Assert** structure for unit tests.
+- Use **Given – When – Then** for integration and feature tests.
+- Write unit tests for:
+  - Domain logic 
+  - Repositories
+  - Blocs/Cubits
+- Write widget tests for UI components.
+- Use `mocktail` for dependency mocking.
+- Maintain high test coverage in domain and data layers.
+- Keep test names descriptive and consistent (`inputX`, `mockX`, `expectedX`).
+
+---
+
+## 🚀 Performance and Optimization
+
+- Use **const constructors** wherever possible to reduce rebuilds.
+- Keep widget trees **flat and modular** — avoid deep nesting.
+- Extract reusable widgets for better structure and readability.
+- Use `ListView.builder` for large lists.
+- Use `compute()` for heavy operations to avoid blocking the UI thread.
+- Implement caching and pagination strategies for performance.
+- Optimize network calls with Dio interceptors and retry logic.
+
+---
+
+## 🎨 UI & Theming (shadcn_flutter)
+
+- Use **shadcn_flutter** as the base UI component library.
+- Use `ThemeData` to maintain visual consistency across the app.
+- Use `AppLocalizations` for translations and localization.
+- Maintain high accessibility and contrast standards.
+- Build **responsive layouts** for mobile, web, and desktop.
+- Use animations only when they add UX value (keep performance in mind).
+- Break down large widgets into smaller, composable components.
+
+---
+
+## ✅ Summary
+
+These rules ensure:
+- Consistent and maintainable Flutter codebase.
+- Scalable architecture based on Clean Architecture principles.
+- Reliable and testable business logic.
+- High-quality UI implementation using modern Flutter patterns.
+- Error-safe functional code with strong typing and DI automation.
+
+Follow these standards for all new code and refactors within this project.
+
