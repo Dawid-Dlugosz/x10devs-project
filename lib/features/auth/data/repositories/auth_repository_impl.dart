@@ -33,7 +33,7 @@ class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> logout() async {
+  Future<Either<Failure, Unit>> logout() async {
     try {
       await _authRemoteDataSource.logout();
       return right(unit);

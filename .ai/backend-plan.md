@@ -21,7 +21,7 @@ This project strictly separates the roles of Data Sources (Services) and Reposit
 
 -   ### **Repositories**
     -   **Responsibility**: Act as a mediator between the Domain layer and the Data layer. A repository orchestrates data from one or more services (data sources). It is the single source of truth for the application's data.
-    -   **Return Types**: All public methods must return a `Future<Either<Failure, Entity>>`.
+    -   **Return Types**: All public methods must return a `Future<Either<Failure, T>>`, where `T` is a data model (e.g. `DeckModel`).
     -   **Error Handling**: A repository **must** wrap all service calls in a `try-catch` block. It is responsible for catching platform-specific exceptions from services and mapping them to a specific, application-wide `Failure` type.
     -   **Example**: The repository calls the service's `login` method, catches the `AuthException`, and returns `Left(InvalidCredentialsFailure())`.
 
@@ -55,7 +55,7 @@ class DeckModel with _$DeckModel {
     required String userId,
     required String name,
     required int flashcardCount,
-    required DateTime createdAt,
+    required int createdAt,
   }) = _DeckModel;
 
   factory DeckModel.fromJson(Map<String, dynamic> json) => _$DeckModelFromJson(json);
@@ -82,7 +82,7 @@ class FlashcardModel with _$FlashcardModel {
     required String back,
     required bool isAiGenerated,
     required bool wasModifiedByUser,
-    required DateTime createdAt,
+    required int createdAt,
   }) = _FlashcardModel;
 
   factory FlashcardModel.fromJson(Map<String, dynamic> json) => _$FlashcardModelFromJson(json);

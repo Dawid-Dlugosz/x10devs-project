@@ -13,7 +13,7 @@ abstract class IAuthRepository {
     required String password,
   });
 
-  Future<Either<Failure, void>> logout();
+  Future<Either<Failure, Unit>> logout();
 
   Future<Either<Failure, User?>> getCurrentUser();
 }

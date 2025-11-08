@@ -41,11 +41,11 @@ aplikacja_dart/
 │       └── <feature_name>/          # e.g. login, products
 │           ├── data/                # DATA layer (repository implementations, data sources)
 │           │   ├── data_sources/    # API, database, local storage
-│           │   ├── models/          # Data models for the data layer
+│           │   ├── models/          # Data models (DTOs), used also by the domain layer
 │           │   └── repositories/    # Repository implementations
 │           │
 │           ├── domain/              # DOMAIN layer (business logic, abstractions)
-│           │   ├── entities/        # Business entities (pure data models)
+│           │   ├── data_sources/    # Abstract services definitions (interfaces)
 │           │   ├── repositories/    # Abstract repository definitions (interfaces)
 │           │
 │           └── presentation/        # PRESENTATION layer (UI and state management)
@@ -91,6 +91,7 @@ Follow Clean Architecture with a **feature-first** organization pattern.
 
 - The project is divided into **Presentation**, **Domain**, and **Data** layers.
 - Dependencies always point **inward** (Data → Domain → Presentation).
+- For simplicity, this project uses data **Models** from the Data layer directly in the **Domain** layer, avoiding a separate **Entity** mapping.
 - Each feature is self-contained and includes its own layers.
 - Shared resources are placed under `core/`.
 - Prefer **composition over inheritance**.
@@ -112,7 +113,7 @@ lib/
         │   ├── models/
         │   └── repositories/
         ├── domain/
-        │   ├── entities/
+        │   ├── data_sources/
         │   ├── repositories/
         └── presentation/
             ├── bloc/
