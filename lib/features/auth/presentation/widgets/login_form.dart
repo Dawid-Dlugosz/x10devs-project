@@ -92,7 +92,7 @@ class _LoginFormState extends State<LoginForm> {
               trailing: IconButton(
                 iconSize: 20,
                 onPressed: () => setState(() => _isObscure = !_isObscure),
-                icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility,),
+                icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility, size: 16,),
               ),
             ),
             const SizedBox(height: 24),

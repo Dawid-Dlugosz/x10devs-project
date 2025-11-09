@@ -11,7 +11,7 @@ final GoRouter router = GoRouter(
   refreshListenable: GoRouterRefreshStream(getIt<AuthCubit>().stream),
   redirect: (BuildContext context, GoRouterState state) {
     final authState = getIt<AuthCubit>().state;
-    print('sadsdsdaads: ${authState}');
+  
     final publicRoutes = ['/login', '/register'];
     final isPublicRoute = publicRoutes.contains(state.uri.toString());
 

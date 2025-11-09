@@ -100,7 +100,7 @@ Oto przykład tego, jak powinien wyglądać plik wyjściowy (treść jest do zas
 ## 6. Zarządzanie stanem
 [Opis zarządzania stanem w widoku]
 
-## 7. Integracja API
+## 7. Integracja cubitów
 [Wyjaśnienie integracji z dostarczonym endpointem, wskazanie typów żądania i odpowiedzi]
 
 ## 8. Interakcje użytkownika
