@@ -29,6 +29,8 @@ class AuthRepositoryImpl implements IAuthRepository {
       return right(user);
     } on AuthException catch (e) {
       return left(Failure.authFailure(message: e.message));
+    } catch (e) {
+      return left(Failure.serverFailure(message: e.toString()));
     }
   }
 

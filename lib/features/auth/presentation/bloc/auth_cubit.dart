@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:x10devs/features/auth/domain/repositories/auth_repository.dart';
 import 'package:x10devs/features/auth/presentation/bloc/auth_state.dart';
 
-@injectable
+@lazySingleton
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit(this._authRepository) : super(const AuthState.initial());
 
@@ -34,6 +34,7 @@ class AuthCubit extends Cubit<AuthState> {
       (failure) => emit(AuthState.error(failure: failure)),
       (user) => emit(AuthState.authenticated(user: user)),
     );
+    print('sasda :${state}');
   }
 
   Future<void> register(String email, String password) async {
