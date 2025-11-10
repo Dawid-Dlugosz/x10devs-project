@@ -15,6 +15,7 @@ class DecksRemoteDataSourceImpl implements IDecksRemoteDataSource {
     final response = await _supabaseClient
         .from('decks')
         .insert({'name': name, 'user_id': userId}).select();
+    
     return DeckModel.fromJson(response.first);
   }
 
@@ -26,6 +27,7 @@ class DecksRemoteDataSourceImpl implements IDecksRemoteDataSource {
   @override
   Future<List<DeckModel>> getDecks() async {
     final response = await _supabaseClient.from('decks').select();
+    
     return response.map((deck) => DeckModel.fromJson(deck)).toList();
   }
 

@@ -9,5 +9,6 @@ sealed class DecksState with _$DecksState {
   const factory DecksState.initial() = _Initial;
   const factory DecksState.loading() = _Loading;
   const factory DecksState.loaded({required List<DeckModel> decks}) = _Loaded;
+  const factory DecksState.created({required DeckModel deck}) = _Created;
   const factory DecksState.error({required Failure failure}) = _Error;
 }

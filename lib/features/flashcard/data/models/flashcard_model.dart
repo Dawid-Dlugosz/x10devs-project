@@ -13,7 +13,7 @@ abstract class FlashcardModel with _$FlashcardModel {
     required String back,
     required bool isAiGenerated,
     required bool wasModifiedByUser,
-    required int createdAt,
+    required DateTime createdAt,
   }) = _FlashcardModel;
 
   factory FlashcardModel.fromJson(Map<String, dynamic> json) =>

@@ -11,7 +11,7 @@ abstract class DeckModel with _$DeckModel {
     required String userId,
     required String name,
     required int flashcardCount,
-    required int createdAt,
+    required DateTime createdAt,
   }) = _DeckModel;
 
   factory DeckModel.fromJson(Map<String, dynamic> json) =>

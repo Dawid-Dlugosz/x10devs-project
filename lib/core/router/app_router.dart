@@ -5,6 +5,7 @@ import 'package:x10devs/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:x10devs/features/auth/presentation/bloc/auth_state.dart';
 import 'package:x10devs/features/auth/presentation/pages/login_page.dart';
 import 'package:x10devs/features/auth/presentation/pages/register_page.dart';
+import 'package:x10devs/features/decks/presentation/pages/decks_page.dart';
 import 'package:x10devs/injectable_config.dart';
 
 final GoRouter router = GoRouter(
@@ -54,8 +55,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/decks',
       builder: (BuildContext context, GoRouterState state) {
-        // Placeholder for the decks page
-        return const Scaffold(body: Center(child: Text('Decks Page')));
+        return const DecksPage();
       },
     ),
   ],

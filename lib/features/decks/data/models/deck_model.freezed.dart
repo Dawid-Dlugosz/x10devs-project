@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DeckModel {
 
- int get id; String get userId; String get name; int get flashcardCount; int get createdAt;
+ int get id; String get userId; String get name; int get flashcardCount; DateTime get createdAt;
 /// Create a copy of DeckModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $DeckModelCopyWith<$Res>  {
   factory $DeckModelCopyWith(DeckModel value, $Res Function(DeckModel) _then) = _$DeckModelCopyWithImpl;
 @useResult
 $Res call({
- int id, String userId, String name, int flashcardCount, int createdAt
+ int id, String userId, String name, int flashcardCount, DateTime createdAt
 });
 
 
@@ -72,7 +72,7 @@ as int,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_t
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,flashcardCount: null == flashcardCount ? _self.flashcardCount : flashcardCount // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as int,
+as DateTime,
   ));
 }
 
@@ -157,7 +157,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String userId,  String name,  int flashcardCount,  int createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String userId,  String name,  int flashcardCount,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DeckModel() when $default != null:
 return $default(_that.id,_that.userId,_that.name,_that.flashcardCount,_that.createdAt);case _:
@@ -178,7 +178,7 @@ return $default(_that.id,_that.userId,_that.name,_that.flashcardCount,_that.crea
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String userId,  String name,  int flashcardCount,  int createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String userId,  String name,  int flashcardCount,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _DeckModel():
 return $default(_that.id,_that.userId,_that.name,_that.flashcardCount,_that.createdAt);case _:
@@ -198,7 +198,7 @@ return $default(_that.id,_that.userId,_that.name,_that.flashcardCount,_that.crea
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String userId,  String name,  int flashcardCount,  int createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String userId,  String name,  int flashcardCount,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _DeckModel() when $default != null:
 return $default(_that.id,_that.userId,_that.name,_that.flashcardCount,_that.createdAt);case _:
@@ -220,7 +220,7 @@ class _DeckModel implements DeckModel {
 @override final  String userId;
 @override final  String name;
 @override final  int flashcardCount;
-@override final  int createdAt;
+@override final  DateTime createdAt;
 
 /// Create a copy of DeckModel
 /// with the given fields replaced by the non-null parameter values.
@@ -255,7 +255,7 @@ abstract mixin class _$DeckModelCopyWith<$Res> implements $DeckModelCopyWith<$Re
   factory _$DeckModelCopyWith(_DeckModel value, $Res Function(_DeckModel) _then) = __$DeckModelCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String userId, String name, int flashcardCount, int createdAt
+ int id, String userId, String name, int flashcardCount, DateTime createdAt
 });
 
 
@@ -279,7 +279,7 @@ as int,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_t
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,flashcardCount: null == flashcardCount ? _self.flashcardCount : flashcardCount // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as int,
+as DateTime,
   ));
 }
 

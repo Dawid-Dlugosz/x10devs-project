@@ -14,7 +14,7 @@ _FlashcardModel _$FlashcardModelFromJson(Map<String, dynamic> json) =>
       back: json['back'] as String,
       isAiGenerated: json['is_ai_generated'] as bool,
       wasModifiedByUser: json['was_modified_by_user'] as bool,
-      createdAt: (json['created_at'] as num).toInt(),
+      createdAt: DateTime.parse(json['created_at'] as String),
     );
 
 Map<String, dynamic> _$FlashcardModelToJson(_FlashcardModel instance) =>
@@ -25,5 +25,5 @@ Map<String, dynamic> _$FlashcardModelToJson(_FlashcardModel instance) =>
       'back': instance.back,
       'is_ai_generated': instance.isAiGenerated,
       'was_modified_by_user': instance.wasModifiedByUser,
-      'created_at': instance.createdAt,
+      'created_at': instance.createdAt.toIso8601String(),
     };

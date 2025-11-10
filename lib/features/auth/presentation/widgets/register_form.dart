@@ -80,6 +80,7 @@ class _RegisterFormState extends State<RegisterForm> {
       loading: () => true,
       orElse: () => false,
     );
+    
     return Form(
       key: _formKey,
       autovalidateMode: _autovalidateMode,

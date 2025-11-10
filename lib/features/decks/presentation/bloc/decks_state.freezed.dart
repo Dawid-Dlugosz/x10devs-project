@@ -55,13 +55,14 @@ extension DecksStatePatterns on DecksState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( _Loaded value)?  loaded,TResult Function( _Error value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( _Loaded value)?  loaded,TResult Function( _Created value)?  created,TResult Function( _Error value)?  error,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case _Loading() when loading != null:
 return loading(_that);case _Loaded() when loaded != null:
-return loaded(_that);case _Error() when error != null:
+return loaded(_that);case _Created() when created != null:
+return created(_that);case _Error() when error != null:
 return error(_that);case _:
   return orElse();
 
@@ -80,13 +81,14 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( _Loaded value)  loaded,required TResult Function( _Error value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( _Loaded value)  loaded,required TResult Function( _Created value)  created,required TResult Function( _Error value)  error,}){
 final _that = this;
 switch (_that) {
 case _Initial():
 return initial(_that);case _Loading():
 return loading(_that);case _Loaded():
-return loaded(_that);case _Error():
+return loaded(_that);case _Created():
+return created(_that);case _Error():
 return error(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
@@ -101,13 +103,14 @@ return error(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( _Loaded value)?  loaded,TResult? Function( _Error value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( _Loaded value)?  loaded,TResult? Function( _Created value)?  created,TResult? Function( _Error value)?  error,}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case _Loading() when loading != null:
 return loading(_that);case _Loaded() when loaded != null:
-return loaded(_that);case _Error() when error != null:
+return loaded(_that);case _Created() when created != null:
+return created(_that);case _Error() when error != null:
 return error(_that);case _:
   return null;
 
@@ -125,12 +128,13 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<DeckModel> decks)?  loaded,TResult Function( Failure failure)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<DeckModel> decks)?  loaded,TResult Function( DeckModel deck)?  created,TResult Function( Failure failure)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Loaded() when loaded != null:
-return loaded(_that.decks);case _Error() when error != null:
+return loaded(_that.decks);case _Created() when created != null:
+return created(_that.deck);case _Error() when error != null:
 return error(_that.failure);case _:
   return orElse();
 
@@ -149,12 +153,13 @@ return error(_that.failure);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<DeckModel> decks)  loaded,required TResult Function( Failure failure)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<DeckModel> decks)  loaded,required TResult Function( DeckModel deck)  created,required TResult Function( Failure failure)  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
 return loading();case _Loaded():
-return loaded(_that.decks);case _Error():
+return loaded(_that.decks);case _Created():
+return created(_that.deck);case _Error():
 return error(_that.failure);}
 }
 /// A variant of `when` that fallback to returning `null`
@@ -169,12 +174,13 @@ return error(_that.failure);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<DeckModel> decks)?  loaded,TResult? Function( Failure failure)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<DeckModel> decks)?  loaded,TResult? Function( DeckModel deck)?  created,TResult? Function( Failure failure)?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Loaded() when loaded != null:
-return loaded(_that.decks);case _Error() when error != null:
+return loaded(_that.decks);case _Created() when created != null:
+return created(_that.deck);case _Error() when error != null:
 return error(_that.failure);case _:
   return null;
 
@@ -317,6 +323,81 @@ as List<DeckModel>,
 }
 
 
+}
+
+/// @nodoc
+
+
+class _Created implements DecksState {
+  const _Created({required this.deck});
+  
+
+ final  DeckModel deck;
+
+/// Create a copy of DecksState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$CreatedCopyWith<_Created> get copyWith => __$CreatedCopyWithImpl<_Created>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Created&&(identical(other.deck, deck) || other.deck == deck));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,deck);
+
+@override
+String toString() {
+  return 'DecksState.created(deck: $deck)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$CreatedCopyWith<$Res> implements $DecksStateCopyWith<$Res> {
+  factory _$CreatedCopyWith(_Created value, $Res Function(_Created) _then) = __$CreatedCopyWithImpl;
+@useResult
+$Res call({
+ DeckModel deck
+});
+
+
+$DeckModelCopyWith<$Res> get deck;
+
+}
+/// @nodoc
+class __$CreatedCopyWithImpl<$Res>
+    implements _$CreatedCopyWith<$Res> {
+  __$CreatedCopyWithImpl(this._self, this._then);
+
+  final _Created _self;
+  final $Res Function(_Created) _then;
+
+/// Create a copy of DecksState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? deck = null,}) {
+  return _then(_Created(
+deck: null == deck ? _self.deck : deck // ignore: cast_nullable_to_non_nullable
+as DeckModel,
+  ));
+}
+
+/// Create a copy of DecksState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$DeckModelCopyWith<$Res> get deck {
+  
+  return $DeckModelCopyWith<$Res>(_self.deck, (value) {
+    return _then(_self.copyWith(deck: value));
+  });
+}
 }
 
 /// @nodoc

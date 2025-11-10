@@ -23,7 +23,7 @@ class DecksCubit extends Cubit<DecksState> {
     final result = await _decksRepository.createDeck(name: name);
     result.fold(
       (failure) => emit(DecksState.error(failure: failure)),
-      (_) => getDecks(),
+      (deck) => emit(DecksState.created(deck: deck)),
     );
   }
 

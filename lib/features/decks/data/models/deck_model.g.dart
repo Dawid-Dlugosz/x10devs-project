@@ -11,7 +11,7 @@ _DeckModel _$DeckModelFromJson(Map<String, dynamic> json) => _DeckModel(
   userId: json['user_id'] as String,
   name: json['name'] as String,
   flashcardCount: (json['flashcard_count'] as num).toInt(),
-  createdAt: (json['created_at'] as num).toInt(),
+  createdAt: DateTime.parse(json['created_at'] as String),
 );
 
 Map<String, dynamic> _$DeckModelToJson(_DeckModel instance) =>
@@ -20,5 +20,5 @@ Map<String, dynamic> _$DeckModelToJson(_DeckModel instance) =>
       'user_id': instance.userId,
       'name': instance.name,
       'flashcard_count': instance.flashcardCount,
-      'created_at': instance.createdAt,
+      'created_at': instance.createdAt.toIso8601String(),
     };

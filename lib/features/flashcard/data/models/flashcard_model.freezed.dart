@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FlashcardModel {
 
- int get id; int get deckId; String get front; String get back; bool get isAiGenerated; bool get wasModifiedByUser; int get createdAt;
+ int get id; int get deckId; String get front; String get back; bool get isAiGenerated; bool get wasModifiedByUser; DateTime get createdAt;
 /// Create a copy of FlashcardModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $FlashcardModelCopyWith<$Res>  {
   factory $FlashcardModelCopyWith(FlashcardModel value, $Res Function(FlashcardModel) _then) = _$FlashcardModelCopyWithImpl;
 @useResult
 $Res call({
- int id, int deckId, String front, String back, bool isAiGenerated, bool wasModifiedByUser, int createdAt
+ int id, int deckId, String front, String back, bool isAiGenerated, bool wasModifiedByUser, DateTime createdAt
 });
 
 
@@ -74,7 +74,7 @@ as String,back: null == back ? _self.back : back // ignore: cast_nullable_to_non
 as String,isAiGenerated: null == isAiGenerated ? _self.isAiGenerated : isAiGenerated // ignore: cast_nullable_to_non_nullable
 as bool,wasModifiedByUser: null == wasModifiedByUser ? _self.wasModifiedByUser : wasModifiedByUser // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as int,
+as DateTime,
   ));
 }
 
@@ -159,7 +159,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  int deckId,  String front,  String back,  bool isAiGenerated,  bool wasModifiedByUser,  int createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  int deckId,  String front,  String back,  bool isAiGenerated,  bool wasModifiedByUser,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FlashcardModel() when $default != null:
 return $default(_that.id,_that.deckId,_that.front,_that.back,_that.isAiGenerated,_that.wasModifiedByUser,_that.createdAt);case _:
@@ -180,7 +180,7 @@ return $default(_that.id,_that.deckId,_that.front,_that.back,_that.isAiGenerated
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  int deckId,  String front,  String back,  bool isAiGenerated,  bool wasModifiedByUser,  int createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  int deckId,  String front,  String back,  bool isAiGenerated,  bool wasModifiedByUser,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _FlashcardModel():
 return $default(_that.id,_that.deckId,_that.front,_that.back,_that.isAiGenerated,_that.wasModifiedByUser,_that.createdAt);case _:
@@ -200,7 +200,7 @@ return $default(_that.id,_that.deckId,_that.front,_that.back,_that.isAiGenerated
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  int deckId,  String front,  String back,  bool isAiGenerated,  bool wasModifiedByUser,  int createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  int deckId,  String front,  String back,  bool isAiGenerated,  bool wasModifiedByUser,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _FlashcardModel() when $default != null:
 return $default(_that.id,_that.deckId,_that.front,_that.back,_that.isAiGenerated,_that.wasModifiedByUser,_that.createdAt);case _:
@@ -224,7 +224,7 @@ class _FlashcardModel implements FlashcardModel {
 @override final  String back;
 @override final  bool isAiGenerated;
 @override final  bool wasModifiedByUser;
-@override final  int createdAt;
+@override final  DateTime createdAt;
 
 /// Create a copy of FlashcardModel
 /// with the given fields replaced by the non-null parameter values.
@@ -259,7 +259,7 @@ abstract mixin class _$FlashcardModelCopyWith<$Res> implements $FlashcardModelCo
   factory _$FlashcardModelCopyWith(_FlashcardModel value, $Res Function(_FlashcardModel) _then) = __$FlashcardModelCopyWithImpl;
 @override @useResult
 $Res call({
- int id, int deckId, String front, String back, bool isAiGenerated, bool wasModifiedByUser, int createdAt
+ int id, int deckId, String front, String back, bool isAiGenerated, bool wasModifiedByUser, DateTime createdAt
 });
 
 
@@ -285,7 +285,7 @@ as String,back: null == back ? _self.back : back // ignore: cast_nullable_to_non
 as String,isAiGenerated: null == isAiGenerated ? _self.isAiGenerated : isAiGenerated // ignore: cast_nullable_to_non_nullable
 as bool,wasModifiedByUser: null == wasModifiedByUser ? _self.wasModifiedByUser : wasModifiedByUser // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as int,
+as DateTime,
   ));
 }
 
