@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 // import 'package:shadcn_flutter/shadcn_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:x10devs/core/router/app_router.dart';
-import 'package:x10devs/core/widgets/custom_multi_bloc_provider.dart';
-import 'package:x10devs/injectable_config.dart';
+import 'package:x10devs/features/decks/presentation/bloc/decks_cubit.dart';
 
-void main() async {
+import 'package:x10devs/injectable_config.dart';
+import 'package:x10devs/features/auth/presentation/bloc/auth_cubit.dart';
+import 'package:x10devs/features/flashcard/presentation/bloc/ai_generation_cubit.dart';
+import 'package:x10devs/features/flashcard/presentation/bloc/flashcard_cubit.dart';
+
+Future<void> main() async {
   usePathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -28,25 +33,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShadApp.custom(
-      themeMode: ThemeMode.dark,
-      darkTheme: ShadThemeData(
-        brightness: Brightness.dark,
-        colorScheme: ShadColorScheme.fromName('blue', brightness: Brightness.dark),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt<AuthCubit>()..checkAuthStatus(),
+        ),
+        BlocProvider(create: (context) => getIt<FlashcardCubit>()),
+        BlocProvider(create: (context) => getIt<AiGenerationCubit>()),
+        BlocProvider(create: (context) => getIt<DecksCubit>()),
+      ],
+      child: ShadApp.router(
+        routerConfig: router,
+        theme: ShadThemeData(
+          brightness: Brightness.dark,
+          colorScheme: const ShadSlateColorScheme.dark(),
+        ),
       ),
-      appBuilder: (context) {
-        return CustomMultiBlocProvider(
-          child: MaterialApp.router(
-            routerConfig: router,
-            theme: Theme.of(context),
-            builder: (context, child) {
-              return ShadAppBuilder(
-                child: child!,
-              );
-            },
-          ),
-        );
-      },
     );
-  }  
+  }
 }

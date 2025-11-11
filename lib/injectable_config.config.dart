@@ -83,13 +83,13 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i40.FlashcardRepositoryImpl(gh<_i370.IFlashcardsRemoteDataSource>()),
     );
-    gh.factory<_i559.FlashcardCubit>(
+    gh.lazySingleton<_i559.FlashcardCubit>(
       () => _i559.FlashcardCubit(gh<_i600.IFlashcardRepository>()),
     );
     gh.lazySingleton<_i47.IDecksRemoteDataSource>(
       () => _i566.DecksRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
-    gh.factory<_i994.AiGenerationCubit>(
+    gh.lazySingleton<_i994.AiGenerationCubit>(
       () => _i994.AiGenerationCubit(gh<_i1053.IAIGenerationRepository>()),
     );
     gh.lazySingleton<_i551.IAuthRepository>(

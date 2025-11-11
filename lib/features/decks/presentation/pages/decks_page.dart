@@ -11,9 +11,14 @@ import 'package:x10devs/features/decks/presentation/widgets/empty_decks_view.dar
 import 'package:x10devs/injectable_config.dart';
 import 'package:go_router/go_router.dart';
 
-class DecksPage extends StatelessWidget {
+class DecksPage extends StatefulWidget {
   const DecksPage({super.key});
 
+  @override
+  State<DecksPage> createState() => _DecksPageState();
+}
+
+class _DecksPageState extends State<DecksPage> {
   void _showCreateDeckDialog(BuildContext context) async {
     final newName = await showCreateOrEditDeckDialog(context);
     if (newName != null && context.mounted) {
@@ -22,10 +27,15 @@ class DecksPage extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    context.read<DecksCubit>().getDecks();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<DecksCubit>()..getDecks(),
-      child: Builder(builder: (context) {
+    return Builder(
+      builder: (context) {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Twoje Talie'),
@@ -67,7 +77,8 @@ class DecksPage extends StatelessWidget {
                   loaded: (loadedState) {
                     if (loadedState.decks.isEmpty) {
                       return EmptyDecksView(
-                        onCreateDeckPressed: () => _showCreateDeckDialog(context),
+                        onCreateDeckPressed: () =>
+                            _showCreateDeckDialog(context),
                       );
                     }
                     return DecksListWidget(decks: loadedState.decks);
@@ -91,7 +102,7 @@ class DecksPage extends StatelessWidget {
             child: const Icon(Icons.add),
           ),
         );
-      }),
+      },
     );
   }
 }

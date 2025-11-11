@@ -20,4 +20,8 @@ abstract class IFlashcardsRemoteDataSource {
   });
 
   Future<void> deleteFlashcard({required int flashcardId});
+
+  Future<void> createFlashcards({
+    required List<Map<String, dynamic>> flashcards,
+  });
 }

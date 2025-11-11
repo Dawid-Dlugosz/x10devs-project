@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:x10devs/features/flashcard/data/models/flashcard_candidate_model.dart';
 
 import '../../../../core/errors/failure.dart';
 import '../../data/models/flashcard_model.dart';
@@ -6,6 +7,11 @@ import '../../data/models/flashcard_model.dart';
 abstract class IFlashcardRepository {
   Future<Either<Failure, List<FlashcardModel>>> getFlashcardsForDeck({
     required int deckId,
+  });
+
+  Future<Either<Failure, void>> createFlashcards({
+    required int deckId,
+    required List<FlashcardCandidateModel> candidates,
   });
 
   Future<Either<Failure, FlashcardModel>> createFlashcard({

@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/errors/failure.dart';
 import '../../domain/data_sources/flashcard_remote_data_source.dart';
 import '../../domain/repositories/flashcard_repository.dart';
+import '../models/flashcard_candidate_model.dart';
 import '../models/flashcard_model.dart';
 
 @LazySingleton(as: IFlashcardRepository)
@@ -28,6 +29,34 @@ class FlashcardRepositoryImpl implements IFlashcardRepository {
         isAiGenerated: isAiGenerated,
       );
       return Right(flashcard);
+    } on PostgrestException catch (e) {
+      return Left(Failure.serverFailure(message: e.message));
+    } catch (e) {
+      return Left(Failure.failure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> createFlashcards({
+    required int deckId,
+    required List<FlashcardCandidateModel> candidates,
+  }) async {
+    try {
+      final flashcardsToCreate = candidates
+          .map(
+            (c) => {
+              'deck_id': deckId,
+              'front': c.front,
+              'back': c.back,
+              'is_ai_generated': true,
+              'was_modified_by_user': c.wasModified,
+            },
+          )
+          .toList();
+      await _flashcardsRemoteDataSource.createFlashcards(
+        flashcards: flashcardsToCreate,
+      );
+      return const Right(null);
     } on PostgrestException catch (e) {
       return Left(Failure.serverFailure(message: e.message));
     } catch (e) {

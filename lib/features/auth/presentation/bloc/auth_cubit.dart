@@ -34,7 +34,6 @@ class AuthCubit extends Cubit<AuthState> {
       (failure) => emit(AuthState.error(failure: failure)),
       (user) => emit(AuthState.authenticated(user: user)),
     );
-    print('sasda :${state}');
   }
 
   Future<void> register(String email, String password) async {

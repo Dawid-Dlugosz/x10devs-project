@@ -5,14 +5,20 @@ import 'package:x10devs/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:x10devs/features/auth/presentation/bloc/auth_state.dart';
 import 'package:x10devs/features/auth/presentation/pages/login_page.dart';
 import 'package:x10devs/features/auth/presentation/pages/register_page.dart';
+import 'package:x10devs/features/decks/presentation/bloc/decks_cubit.dart';
 import 'package:x10devs/features/decks/presentation/pages/decks_page.dart';
+import 'package:x10devs/features/flashcard/presentation/bloc/ai_generation_cubit.dart';
+import 'package:x10devs/features/flashcard/presentation/bloc/flashcard_cubit.dart';
+import 'package:x10devs/features/flashcard/presentation/pages/flashcards_page.dart';
+import 'package:x10devs/features/flashcard/presentation/pages/review_page.dart';
 import 'package:x10devs/injectable_config.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 final GoRouter router = GoRouter(
   refreshListenable: GoRouterRefreshStream(getIt<AuthCubit>().stream),
   redirect: (BuildContext context, GoRouterState state) {
     final authState = getIt<AuthCubit>().state;
-  
+
     final publicRoutes = ['/login', '/register'];
     final isPublicRoute = publicRoutes.contains(state.uri.toString());
 
@@ -55,8 +61,34 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/decks',
       builder: (BuildContext context, GoRouterState state) {
+        getIt<DecksCubit>().getDecks();
+        print('asdsdaasd:');
         return const DecksPage();
       },
+      routes: <GoRoute>[
+        GoRoute(
+          path: ':deckId',
+          builder: (BuildContext context, GoRouterState state) {
+            final deckId = state.pathParameters['deckId']!;
+            return FlashcardsPage(deckId: deckId);
+          },
+          routes: <GoRoute>[
+            GoRoute(
+              path: 'review',
+              builder: (BuildContext context, GoRouterState state) {
+                final deckId = state.pathParameters['deckId']!;
+                return MultiBlocProvider(
+                  providers: [
+                    BlocProvider.value(value: getIt<FlashcardCubit>()),
+                    BlocProvider.value(value: getIt<AiGenerationCubit>()),
+                  ],
+                  child: ReviewPage(deckId: deckId),
+                );
+              },
+            ),
+          ],
+        ),
+      ],
     ),
   ],
 );

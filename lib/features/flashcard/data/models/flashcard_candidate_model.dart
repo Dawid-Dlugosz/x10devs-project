@@ -8,6 +8,7 @@ abstract class FlashcardCandidateModel with _$FlashcardCandidateModel {
   const factory FlashcardCandidateModel({
     required String front,
     required String back,
+    @Default(false) bool wasModified,
   }) = _FlashcardCandidateModel;
 
   factory FlashcardCandidateModel.fromJson(Map<String, dynamic> json) =>

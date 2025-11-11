@@ -59,4 +59,10 @@ class FlashcardsRemoteDataSourceImpl implements IFlashcardsRemoteDataSource {
         .select();
     return FlashcardModel.fromJson(response.first);
   }
+
+  @override
+  Future<void> createFlashcards(
+      {required List<Map<String, dynamic>> flashcards}) async {
+    await _supabaseClient.from('flashcards').insert(flashcards);
+  }
 }

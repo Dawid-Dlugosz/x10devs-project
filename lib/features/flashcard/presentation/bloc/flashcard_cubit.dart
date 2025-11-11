@@ -1,9 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:x10devs/features/decks/presentation/bloc/decks_cubit.dart';
+import 'package:x10devs/features/flashcard/data/models/flashcard_candidate_model.dart';
 import 'package:x10devs/features/flashcard/domain/repositories/flashcard_repository.dart';
 import 'package:x10devs/features/flashcard/presentation/bloc/flashcard_state.dart';
+import 'package:x10devs/injectable_config.dart';
 
-@injectable
+@lazySingleton
 class FlashcardCubit extends Cubit<FlashcardState> {
   FlashcardCubit(this._flashcardRepository) : super(const FlashcardState.initial());
 
@@ -14,7 +17,10 @@ class FlashcardCubit extends Cubit<FlashcardState> {
     final result = await _flashcardRepository.getFlashcardsForDeck(deckId: deckId);
     result.fold(
       (failure) => emit(FlashcardState.error(failure: failure)),
-      (flashcards) => emit(FlashcardState.loaded(flashcards: flashcards)),
+      (flashcards) {
+        emit(FlashcardState.loaded(flashcards: flashcards));
+        getIt<DecksCubit>().updateDeckFlashcardCount(deckId, flashcards.length);
+      },
     );
   }
 
@@ -30,6 +36,21 @@ class FlashcardCubit extends Cubit<FlashcardState> {
       front: front,
       back: back,
       isAiGenerated: isAiGenerated,
+    );
+    result.fold(
+      (failure) => emit(FlashcardState.error(failure: failure)),
+      (_) => getFlashcards(deckId),
+    );
+  }
+
+  Future<void> createFlashcards({
+    required int deckId,
+    required List<FlashcardCandidateModel> candidates,
+  }) async {
+    emit(const FlashcardState.loading());
+    final result = await _flashcardRepository.createFlashcards(
+      deckId: deckId,
+      candidates: candidates,
     );
     result.fold(
       (failure) => emit(FlashcardState.error(failure: failure)),

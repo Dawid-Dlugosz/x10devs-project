@@ -11,8 +11,13 @@ _FlashcardCandidateModel _$FlashcardCandidateModelFromJson(
 ) => _FlashcardCandidateModel(
   front: json['front'] as String,
   back: json['back'] as String,
+  wasModified: json['wasModified'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$FlashcardCandidateModelToJson(
   _FlashcardCandidateModel instance,
-) => <String, dynamic>{'front': instance.front, 'back': instance.back};
+) => <String, dynamic>{
+  'front': instance.front,
+  'back': instance.back,
+  'wasModified': instance.wasModified,
+};

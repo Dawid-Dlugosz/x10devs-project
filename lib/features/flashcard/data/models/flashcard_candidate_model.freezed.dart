@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FlashcardCandidateModel {
 
- String get front; String get back;
+ String get front; String get back; bool get wasModified;
 /// Create a copy of FlashcardCandidateModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $FlashcardCandidateModelCopyWith<FlashcardCandidateModel> get copyWith => _$Flas
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FlashcardCandidateModel&&(identical(other.front, front) || other.front == front)&&(identical(other.back, back) || other.back == back));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FlashcardCandidateModel&&(identical(other.front, front) || other.front == front)&&(identical(other.back, back) || other.back == back)&&(identical(other.wasModified, wasModified) || other.wasModified == wasModified));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,front,back);
+int get hashCode => Object.hash(runtimeType,front,back,wasModified);
 
 @override
 String toString() {
-  return 'FlashcardCandidateModel(front: $front, back: $back)';
+  return 'FlashcardCandidateModel(front: $front, back: $back, wasModified: $wasModified)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $FlashcardCandidateModelCopyWith<$Res>  {
   factory $FlashcardCandidateModelCopyWith(FlashcardCandidateModel value, $Res Function(FlashcardCandidateModel) _then) = _$FlashcardCandidateModelCopyWithImpl;
 @useResult
 $Res call({
- String front, String back
+ String front, String back, bool wasModified
 });
 
 
@@ -65,11 +65,12 @@ class _$FlashcardCandidateModelCopyWithImpl<$Res>
 
 /// Create a copy of FlashcardCandidateModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? front = null,Object? back = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? front = null,Object? back = null,Object? wasModified = null,}) {
   return _then(_self.copyWith(
 front: null == front ? _self.front : front // ignore: cast_nullable_to_non_nullable
 as String,back: null == back ? _self.back : back // ignore: cast_nullable_to_non_nullable
-as String,
+as String,wasModified: null == wasModified ? _self.wasModified : wasModified // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -154,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String front,  String back)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String front,  String back,  bool wasModified)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FlashcardCandidateModel() when $default != null:
-return $default(_that.front,_that.back);case _:
+return $default(_that.front,_that.back,_that.wasModified);case _:
   return orElse();
 
 }
@@ -175,10 +176,10 @@ return $default(_that.front,_that.back);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String front,  String back)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String front,  String back,  bool wasModified)  $default,) {final _that = this;
 switch (_that) {
 case _FlashcardCandidateModel():
-return $default(_that.front,_that.back);case _:
+return $default(_that.front,_that.back,_that.wasModified);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +196,10 @@ return $default(_that.front,_that.back);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String front,  String back)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String front,  String back,  bool wasModified)?  $default,) {final _that = this;
 switch (_that) {
 case _FlashcardCandidateModel() when $default != null:
-return $default(_that.front,_that.back);case _:
+return $default(_that.front,_that.back,_that.wasModified);case _:
   return null;
 
 }
@@ -210,11 +211,12 @@ return $default(_that.front,_that.back);case _:
 @JsonSerializable()
 
 class _FlashcardCandidateModel implements FlashcardCandidateModel {
-  const _FlashcardCandidateModel({required this.front, required this.back});
+  const _FlashcardCandidateModel({required this.front, required this.back, this.wasModified = false});
   factory _FlashcardCandidateModel.fromJson(Map<String, dynamic> json) => _$FlashcardCandidateModelFromJson(json);
 
 @override final  String front;
 @override final  String back;
+@override@JsonKey() final  bool wasModified;
 
 /// Create a copy of FlashcardCandidateModel
 /// with the given fields replaced by the non-null parameter values.
@@ -229,16 +231,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FlashcardCandidateModel&&(identical(other.front, front) || other.front == front)&&(identical(other.back, back) || other.back == back));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FlashcardCandidateModel&&(identical(other.front, front) || other.front == front)&&(identical(other.back, back) || other.back == back)&&(identical(other.wasModified, wasModified) || other.wasModified == wasModified));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,front,back);
+int get hashCode => Object.hash(runtimeType,front,back,wasModified);
 
 @override
 String toString() {
-  return 'FlashcardCandidateModel(front: $front, back: $back)';
+  return 'FlashcardCandidateModel(front: $front, back: $back, wasModified: $wasModified)';
 }
 
 
@@ -249,7 +251,7 @@ abstract mixin class _$FlashcardCandidateModelCopyWith<$Res> implements $Flashca
   factory _$FlashcardCandidateModelCopyWith(_FlashcardCandidateModel value, $Res Function(_FlashcardCandidateModel) _then) = __$FlashcardCandidateModelCopyWithImpl;
 @override @useResult
 $Res call({
- String front, String back
+ String front, String back, bool wasModified
 });
 
 
@@ -266,11 +268,12 @@ class __$FlashcardCandidateModelCopyWithImpl<$Res>
 
 /// Create a copy of FlashcardCandidateModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? front = null,Object? back = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? front = null,Object? back = null,Object? wasModified = null,}) {
   return _then(_FlashcardCandidateModel(
 front: null == front ? _self.front : front // ignore: cast_nullable_to_non_nullable
 as String,back: null == back ? _self.back : back // ignore: cast_nullable_to_non_nullable
-as String,
+as String,wasModified: null == wasModified ? _self.wasModified : wasModified // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
