@@ -13,7 +13,6 @@ import 'package:x10devs/features/flashcard/presentation/widgets/empty_flashcards
 import 'package:x10devs/features/flashcard/presentation/widgets/flashcard_error_view.dart';
 import 'package:x10devs/features/flashcard/presentation/widgets/flashcards_list_view.dart';
 import 'package:x10devs/features/flashcard/presentation/widgets/generate_with_ai_dialog.dart';
-import 'package:x10devs/injectable_config.dart';
 
 class FlashcardsPage extends StatefulWidget {
   const FlashcardsPage({super.key, required this.deckId});
@@ -86,10 +85,10 @@ class _FlashcardsPageState extends State<FlashcardsPage> {
                       context.go('/decks/${widget.deckId}/review');
                     },
                     error: (failure) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Błąd generowania: ${failure.message}'),
-                          backgroundColor: Theme.of(context).colorScheme.error,
+                      ShadToaster.of(context).show(
+                        ShadToast.destructive(
+                          title: const Text('Błąd generowania'),
+                          description: Text(failure.message),
                         ),
                       );
                     },

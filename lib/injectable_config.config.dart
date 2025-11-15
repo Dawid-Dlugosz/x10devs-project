@@ -65,8 +65,20 @@ extension GetItInjectableX on _i174.GetIt {
       () => injectableModule.supabaseClient,
     );
     gh.lazySingleton<_i361.Dio>(() => injectableModule.dio);
+    gh.factory<String>(
+      () => injectableModule.openRouterBaseUrl,
+      instanceName: 'openRouterBaseUrl',
+    );
+    gh.factory<String>(
+      () => injectableModule.openRouterApiKey,
+      instanceName: 'openRouterApiKey',
+    );
     gh.lazySingleton<_i1017.IAIGenerationRemoteDataSource>(
-      () => _i164.AIGenerationRemoteDataSourceImpl(gh<_i361.Dio>()),
+      () => _i164.AIGenerationRemoteDataSourceImpl(
+        dio: gh<_i361.Dio>(),
+        apiKey: gh<String>(instanceName: 'openRouterApiKey'),
+        baseUrl: gh<String>(instanceName: 'openRouterBaseUrl'),
+      ),
     );
     gh.lazySingleton<_i45.IAuthRemoteDataSource>(
       () => _i45.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
@@ -101,7 +113,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i806.IDecksRepository>(
       () => _i360.DecksRepositoryImpl(gh<_i47.IDecksRemoteDataSource>()),
     );
-    gh.factory<_i514.DecksCubit>(
+    gh.lazySingleton<_i514.DecksCubit>(
       () => _i514.DecksCubit(gh<_i806.IDecksRepository>()),
     );
     return this;

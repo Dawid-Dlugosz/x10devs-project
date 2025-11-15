@@ -11,3 +11,5 @@ sealed class FlashcardState with _$FlashcardState {
   const factory FlashcardState.loaded({required List<FlashcardModel> flashcards}) = _Loaded;
   const factory FlashcardState.error({required Failure failure}) = _Error;
 }
+
+

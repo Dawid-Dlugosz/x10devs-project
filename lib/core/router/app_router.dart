@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:x10devs/core/router/go_router_refresh_stream.dart';
 import 'package:x10devs/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:x10devs/features/auth/presentation/bloc/auth_state.dart';
 import 'package:x10devs/features/auth/presentation/pages/login_page.dart';
 import 'package:x10devs/features/auth/presentation/pages/register_page.dart';
-import 'package:x10devs/features/decks/presentation/bloc/decks_cubit.dart';
 import 'package:x10devs/features/decks/presentation/pages/decks_page.dart';
 import 'package:x10devs/features/flashcard/presentation/bloc/ai_generation_cubit.dart';
 import 'package:x10devs/features/flashcard/presentation/bloc/flashcard_cubit.dart';
 import 'package:x10devs/features/flashcard/presentation/pages/flashcards_page.dart';
 import 'package:x10devs/features/flashcard/presentation/pages/review_page.dart';
 import 'package:x10devs/injectable_config.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 final GoRouter router = GoRouter(
   refreshListenable: GoRouterRefreshStream(getIt<AuthCubit>().stream),
@@ -20,7 +19,8 @@ final GoRouter router = GoRouter(
     final authState = getIt<AuthCubit>().state;
 
     final publicRoutes = ['/login', '/register'];
-    final isPublicRoute = publicRoutes.contains(state.uri.toString());
+    final currentPath = state.matchedLocation;
+    final isPublicRoute = publicRoutes.contains(currentPath);
 
     final isAuthenticated = authState.maybeMap(
       authenticated: (_) => true,
@@ -61,8 +61,6 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/decks',
       builder: (BuildContext context, GoRouterState state) {
-        getIt<DecksCubit>().getDecks();
-        print('asdsdaasd:');
         return const DecksPage();
       },
       routes: <GoRoute>[
