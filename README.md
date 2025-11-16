@@ -90,8 +90,10 @@ Follow these instructions to get a copy of the project up and running on your lo
 -   `flutter pub get`: Installs or updates all project dependencies.
 -   `flutter run`: Compiles and runs the application on a connected device or emulator.
 -   `flutter test`: Executes all unit and widget tests in the project.
+-   `flutter test --coverage`: Runs tests and generates code coverage report.
 -   `flutter pub run build_runner build --delete-conflicting-outputs`: Runs the build runner to generate required files.
 -   `flutter analyze`: Analyzes the project's Dart code for potential errors.
+-   `flutter drive --target=test_driver/app.dart`: Runs E2E integration tests.
 
 ## Project Scope
 
@@ -112,6 +114,137 @@ The following features are intentionally excluded from the MVP to ensure a focus
 -   Sharing decks between users.
 -   Integrations with external educational platforms.
 -   Dedicated native mobile applications.
+
+## Testing
+
+This project follows a comprehensive testing strategy to ensure high quality, reliability, and maintainability.
+
+### Testing Approach
+
+We implement a multi-layered testing strategy:
+
+-   **Unit Tests**: Testing isolated units of code (functions, methods, classes) in the Data and Domain layers
+-   **Widget Tests**: Testing UI components in isolation
+-   **Integration Tests**: Testing collaboration between different layers and external services
+-   **E2E Tests**: Testing complete user scenarios from start to finish
+
+### Testing Tools & Libraries
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| [flutter_test](https://api.flutter.dev/flutter/flutter_test/flutter_test-library.html) | Built-in | Unit and widget testing framework |
+| [mocktail](https://pub.dev/packages/mocktail) | `1.0.4` | Mocking dependencies in tests |
+| [integration_test](https://api.flutter.dev/flutter/integration_test/integration_test-library.html) | Built-in | E2E testing framework |
+
+**Note**: We use `mocktail` directly instead of `bloc_test` due to version compatibility with `bloc ^9.1.0`.
+
+### Test Coverage Goals & Current Status
+
+-   **Overall Coverage**: ≥ 80% (Target)
+-   **Data Layer**: ≥ 85% (Target)
+-   **Domain Layer**: ≥ 90% (Target)
+-   **Presentation Layer**: ≥ 60% (Target)
+
+**Current Status: 147 unit tests ✅ (All passing)**
+
+- ✅ **Auth Module**: 48 tests, ~95% coverage
+  - AuthRemoteDataSource: 15 tests
+  - AuthRepositoryImpl: 13 tests
+  - AuthCubit: 20 tests
+- ✅ **Decks Module**: 33 tests, ~90% coverage
+  - DecksRepositoryImpl: 14 tests
+  - DecksCubit: 19 tests
+- ✅ **Flashcard Module**: 66 tests, ~90% coverage
+  - FlashcardRepositoryImpl: 21 tests
+  - AIGenerationRepositoryImpl: 13 tests
+  - FlashcardCubit: 17 tests
+  - AIGenerationCubit: 15 tests
+
+### Running Tests
+
+```sh
+# Run all tests
+flutter test
+
+# Run tests with coverage report
+flutter test --coverage
+
+# Generate HTML coverage report
+genhtml coverage/lcov.info -o coverage/html
+
+# Run specific test file
+flutter test test/features/auth/auth_cubit_test.dart
+
+# Run integration tests
+flutter drive --target=test_driver/app.dart
+```
+
+### Test Structure
+
+Tests are organized following the same feature-first structure as the main codebase:
+
+```
+test/
+├── features/
+│   ├── auth/
+│   │   ├── data/
+│   │   │   ├── data_sources/
+│   │   │   └── repositories/
+│   │   ├── domain/
+│   │   └── presentation/
+│   │       └── bloc/
+│   ├── decks/
+│   └── flashcard/
+└── widget_test.dart
+```
+
+### What We Test
+
+#### Unit Tests
+-   **Cubits/Blocs**: State management logic (AuthCubit, DecksCubit, FlashcardCubit, AiGenerationCubit)
+-   **Repositories**: Domain layer operations and error handling
+-   **Data Sources**: API communication with Supabase and OpenRouter
+-   **Models**: JSON serialization/deserialization
+
+#### Widget Tests
+-   **Forms**: Login, Register, Add/Edit Flashcard, Create/Edit Deck
+-   **List Components**: DeckCard, FlashcardCard, DecksListWidget
+-   **State Views**: Empty states, error views, loading indicators
+-   **Dialogs**: AI generation dialog, confirmation dialogs
+
+#### Integration Tests
+-   **Authentication Flows**: Registration → Login → Access to protected routes
+-   **CRUD Flows**: Create deck → Add flashcards → Edit → Delete
+-   **AI Generation Flow**: Input text → Generate → Review suggestions → Accept → Save
+-   **Database Integration**: RLS policies, triggers, cascading deletes
+
+#### E2E Tests
+-   Complete user journeys from registration to flashcard creation
+-   AI-powered flashcard generation workflow
+-   Deck and flashcard management scenarios
+-   Cross-browser compatibility (Chrome, Firefox, Safari, Edge)
+
+### Continuous Integration
+
+Tests are automatically run on every commit and pull request via GitHub Actions:
+
+-   ✅ Code analysis (`flutter analyze`)
+-   ✅ Unit tests
+-   ✅ Widget tests
+-   ✅ Integration tests
+-   ✅ Coverage report generation
+-   ✅ Upload to Codecov
+
+### Test Environment
+
+For local testing, we use:
+-   **Supabase Local**: Docker-based local instance for database testing
+-   **Mock Servers**: Mock OpenRouter API for AI generation tests
+-   **Test Data**: Predefined test users, decks, and flashcards
+
+**Documentation:**
+- [Test Plan](.ai/ai-test-plan.md) - Comprehensive testing strategy and scenarios
+- [Unit Tests Summary](.ai/unit-tests-summary.md) - Complete unit tests implementation (147 tests ✅)
 
 ## Project Status
 

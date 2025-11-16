@@ -40,7 +40,6 @@ dependencies:
   freezed_annotation: ^3.1.0
   json_annotation: ^4.9.0
   fpdart: ^1.2.0
-  mocktail: ^1.0.4
   bloc: ^9.1.0
   shadcn_ui: ^0.39.2
   flutter_dotenv: ^6.0.0
@@ -64,6 +63,7 @@ dev_dependencies:
   freezed: ^3.2.3
   json_serializable: ^6.9.0
   injectable_generator: ^2.6.1
+  mocktail: ^1.0.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
