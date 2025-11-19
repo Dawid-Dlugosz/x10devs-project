@@ -20,7 +20,7 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await configureDependencies();
   await Supabase.initialize(
-    url: dotenv.env['UPABASE_URL']!,
+    url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
