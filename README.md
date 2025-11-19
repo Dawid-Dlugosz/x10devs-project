@@ -93,7 +93,19 @@ Follow these instructions to get a copy of the project up and running on your lo
 -   `flutter test --coverage`: Runs tests and generates code coverage report.
 -   `flutter pub run build_runner build --delete-conflicting-outputs`: Runs the build runner to generate required files.
 -   `flutter analyze`: Analyzes the project's Dart code for potential errors.
+
+### Testing
+-   `flutter test`: Executes all unit and widget tests in the project.
+-   `flutter test --coverage`: Runs tests and generates code coverage report.
 -   `flutter drive --target=test_driver/app.dart`: Runs E2E integration tests.
+
+### Database Migration
+-   `./setup_remote_db.sh`: Automated script to link project and run migrations (recommended).
+-   `./migrate_from_env.sh`: Migrate using connection string from `.env.test`.
+-   `./migrate.sh`: Direct migration using `DATABASE_URL` environment variable.
+-   `supabase db push`: Push migrations using Supabase CLI (after linking project).
+
+See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) for detailed database migration instructions.
 
 ## Project Scope
 
