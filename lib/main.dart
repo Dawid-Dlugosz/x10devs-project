@@ -24,6 +24,7 @@ Future<void> main() async {
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
+  //test pr
   // runApp(const ShadcnApp(home: MyApp(),)
   runApp(const MyApp());
 }
