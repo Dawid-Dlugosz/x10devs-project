@@ -17,30 +17,11 @@ Future<void> main() async {
   usePathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables
-  // For production builds, use --dart-define
-  // For local development, use .env file
-  String supabaseUrl;
-  String supabaseAnonKey;
-
-  const dartDefineSupabaseUrl = String.fromEnvironment('SUPABASE_URL');
-  const dartDefineSupabaseKey = String.fromEnvironment('SUPABASE_ANON_KEY');
-
-  if (dartDefineSupabaseUrl.isNotEmpty && dartDefineSupabaseKey.isNotEmpty) {
-    // Production build with --dart-define
-    supabaseUrl = dartDefineSupabaseUrl;
-    supabaseAnonKey = dartDefineSupabaseKey;
-  } else {
-    // Local development with .env file
-    await dotenv.load(fileName: ".env");
-    supabaseUrl = dotenv.env['SUPABASE_URL']!;
-    supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY']!;
-  }
-
+  await dotenv.load(fileName: ".env");
   await configureDependencies();
   await Supabase.initialize(
-    url: supabaseUrl,
-    anonKey: supabaseAnonKey,
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
   // runApp(const ShadcnApp(home: MyApp(),)
