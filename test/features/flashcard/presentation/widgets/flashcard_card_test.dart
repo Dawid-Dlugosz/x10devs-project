@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:x10devs/features/flashcard/data/models/flashcard_model.dart';
@@ -21,14 +20,18 @@ void main() {
     mockFlashcardCubit = MockFlashcardCubit();
     stateController = StreamController<FlashcardState>.broadcast();
 
-    when(() => mockFlashcardCubit.state)
-        .thenReturn(const FlashcardState.initial());
-    when(() => mockFlashcardCubit.stream)
-        .thenAnswer((_) => stateController.stream);
-    when(() => mockFlashcardCubit.close())
-        .thenAnswer((_) async => stateController.close());
-    when(() => mockFlashcardCubit.deleteFlashcard(any(), any()))
-        .thenAnswer((_) async {});
+    when(
+      () => mockFlashcardCubit.state,
+    ).thenReturn(const FlashcardState.initial());
+    when(
+      () => mockFlashcardCubit.stream,
+    ).thenAnswer((_) => stateController.stream);
+    when(
+      () => mockFlashcardCubit.close(),
+    ).thenAnswer((_) async => stateController.close());
+    when(
+      () => mockFlashcardCubit.deleteFlashcard(any(), any()),
+    ).thenAnswer((_) async {});
   });
 
   tearDown(() {
@@ -47,8 +50,9 @@ void main() {
   }
 
   group('FlashcardCard Widget Tests', () {
-    testWidgets('should render flashcard front and back',
-        (WidgetTester tester) async {
+    testWidgets('should render flashcard front and back', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       final flashcard = FlashcardModel(
         id: 1,
@@ -69,8 +73,9 @@ void main() {
       expect(find.byType(ShadCard), findsOneWidget);
     });
 
-    testWidgets('should render edit and delete buttons',
-        (WidgetTester tester) async {
+    testWidgets('should render edit and delete buttons', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       final flashcard = FlashcardModel(
         id: 1,
@@ -90,8 +95,9 @@ void main() {
       expect(find.byIcon(LucideIcons.trash2), findsOneWidget);
     });
 
-    testWidgets('should call deleteFlashcard when delete button is tapped',
-        (WidgetTester tester) async {
+    testWidgets('should call deleteFlashcard when delete button is tapped', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       final flashcard = FlashcardModel(
         id: 1,
@@ -115,8 +121,9 @@ void main() {
       verify(() => mockFlashcardCubit.deleteFlashcard(1, 1)).called(1);
     });
 
-    testWidgets('should handle special characters in flashcard content',
-        (WidgetTester tester) async {
+    testWidgets('should handle special characters in flashcard content', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       final flashcard = FlashcardModel(
         id: 1,
@@ -136,8 +143,9 @@ void main() {
       expect(find.text('Answer: 4! ✅'), findsOneWidget);
     });
 
-    testWidgets('should handle multiline text in flashcard',
-        (WidgetTester tester) async {
+    testWidgets('should handle multiline text in flashcard', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       final flashcard = FlashcardModel(
         id: 1,
@@ -157,8 +165,9 @@ void main() {
       expect(find.text('Line 1\nLine 2\nLine 3'), findsOneWidget);
     });
 
-    testWidgets('should render AI-generated flashcard',
-        (WidgetTester tester) async {
+    testWidgets('should render AI-generated flashcard', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       final flashcard = FlashcardModel(
         id: 1,
@@ -178,8 +187,9 @@ void main() {
       expect(find.text('AI Answer'), findsOneWidget);
     });
 
-    testWidgets('should render modified flashcard',
-        (WidgetTester tester) async {
+    testWidgets('should render modified flashcard', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       final flashcard = FlashcardModel(
         id: 1,
@@ -199,8 +209,9 @@ void main() {
       expect(find.text('Modified Answer'), findsOneWidget);
     });
 
-    testWidgets('should render empty front and back',
-        (WidgetTester tester) async {
+    testWidgets('should render empty front and back', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       final flashcard = FlashcardModel(
         id: 1,
@@ -222,4 +233,3 @@ void main() {
     });
   });
 }
-

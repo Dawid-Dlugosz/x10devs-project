@@ -34,58 +34,69 @@ void main() {
     group('getFlashcardsForDeck', () {
       const testDeckId = 1;
 
-      test('should return Right(List<FlashcardModel>) when successful',
-          () async {
-        final mockFlashcards = [mockFlashcard];
+      test(
+        'should return Right(List<FlashcardModel>) when successful',
+        () async {
+          final mockFlashcards = [mockFlashcard];
 
-        when(() => mockDataSource.getFlashcardsForDeck(deckId: testDeckId))
-            .thenAnswer((_) async => mockFlashcards);
+          when(
+            () => mockDataSource.getFlashcardsForDeck(deckId: testDeckId),
+          ).thenAnswer((_) async => mockFlashcards);
 
-        final result = await repository.getFlashcardsForDeck(deckId: testDeckId);
+          final result = await repository.getFlashcardsForDeck(
+            deckId: testDeckId,
+          );
 
-        expect(result, isA<Right<Failure, List<FlashcardModel>>>());
-        result.fold(
-          (failure) => fail('Should not return failure'),
-          (flashcards) {
+          expect(result, isA<Right<Failure, List<FlashcardModel>>>());
+          result.fold((failure) => fail('Should not return failure'), (
+            flashcards,
+          ) {
             expect(flashcards, equals(mockFlashcards));
             expect(flashcards.length, equals(1));
-          },
-        );
-        verify(() => mockDataSource.getFlashcardsForDeck(deckId: testDeckId))
-            .called(1);
-      });
+          });
+          verify(
+            () => mockDataSource.getFlashcardsForDeck(deckId: testDeckId),
+          ).called(1);
+        },
+      );
 
-      test('should return Right(empty list) when no flashcards exist',
-          () async {
-        when(() => mockDataSource.getFlashcardsForDeck(deckId: testDeckId))
-            .thenAnswer((_) async => []);
+      test(
+        'should return Right(empty list) when no flashcards exist',
+        () async {
+          when(
+            () => mockDataSource.getFlashcardsForDeck(deckId: testDeckId),
+          ).thenAnswer((_) async => []);
 
-        final result = await repository.getFlashcardsForDeck(deckId: testDeckId);
+          final result = await repository.getFlashcardsForDeck(
+            deckId: testDeckId,
+          );
 
-        expect(result, isA<Right<Failure, List<FlashcardModel>>>());
-        result.fold(
-          (failure) => fail('Should not return failure'),
-          (flashcards) => expect(flashcards, isEmpty),
-        );
-      });
+          expect(result, isA<Right<Failure, List<FlashcardModel>>>());
+          result.fold(
+            (failure) => fail('Should not return failure'),
+            (flashcards) => expect(flashcards, isEmpty),
+          );
+        },
+      );
 
       test(
         'should return Left(ServerFailure) when PostgrestException is thrown',
         () async {
           const errorMessage = 'Database error';
 
-          when(() => mockDataSource.getFlashcardsForDeck(deckId: testDeckId))
-              .thenThrow(PostgrestException(message: errorMessage));
+          when(
+            () => mockDataSource.getFlashcardsForDeck(deckId: testDeckId),
+          ).thenThrow(const PostgrestException(message: errorMessage));
 
-          final result =
-              await repository.getFlashcardsForDeck(deckId: testDeckId);
+          final result = await repository.getFlashcardsForDeck(
+            deckId: testDeckId,
+          );
 
           expect(result, isA<Left<Failure, List<FlashcardModel>>>());
           result.fold((failure) {
             failure.when(
               failure: (message) => fail('Wrong failure type'),
-              serverFailure: (message) =>
-                  expect(message, equals(errorMessage)),
+              serverFailure: (message) => expect(message, equals(errorMessage)),
               authFailure: (message) => fail('Wrong failure type'),
               invalidCredentialsFailure: (message) =>
                   fail('Wrong failure type'),
@@ -97,28 +108,34 @@ void main() {
         },
       );
 
-      test('should return Left(Failure) when generic exception is thrown',
-          () async {
-        const errorMessage = 'Unexpected error';
+      test(
+        'should return Left(Failure) when generic exception is thrown',
+        () async {
+          const errorMessage = 'Unexpected error';
 
-        when(() => mockDataSource.getFlashcardsForDeck(deckId: testDeckId))
-            .thenThrow(Exception(errorMessage));
+          when(
+            () => mockDataSource.getFlashcardsForDeck(deckId: testDeckId),
+          ).thenThrow(Exception(errorMessage));
 
-        final result = await repository.getFlashcardsForDeck(deckId: testDeckId);
-
-        expect(result, isA<Left<Failure, List<FlashcardModel>>>());
-        result.fold((failure) {
-          failure.when(
-            failure: (message) => expect(message, contains(errorMessage)),
-            serverFailure: (message) => fail('Wrong failure type'),
-            authFailure: (message) => fail('Wrong failure type'),
-            invalidCredentialsFailure: (message) => fail('Wrong failure type'),
-            emailInUseFailure: (message) => fail('Wrong failure type'),
-            sessionExpiredFailure: (message) => fail('Wrong failure type'),
-            aigenerationFailure: (message) => fail('Wrong failure type'),
+          final result = await repository.getFlashcardsForDeck(
+            deckId: testDeckId,
           );
-        }, (flashcards) => fail('Should not return flashcards'));
-      });
+
+          expect(result, isA<Left<Failure, List<FlashcardModel>>>());
+          result.fold((failure) {
+            failure.when(
+              failure: (message) => expect(message, contains(errorMessage)),
+              serverFailure: (message) => fail('Wrong failure type'),
+              authFailure: (message) => fail('Wrong failure type'),
+              invalidCredentialsFailure: (message) =>
+                  fail('Wrong failure type'),
+              emailInUseFailure: (message) => fail('Wrong failure type'),
+              sessionExpiredFailure: (message) => fail('Wrong failure type'),
+              aigenerationFailure: (message) => fail('Wrong failure type'),
+            );
+          }, (flashcards) => fail('Should not return flashcards'));
+        },
+      );
     });
 
     group('createFlashcard', () {
@@ -126,32 +143,33 @@ void main() {
       const testFront = 'New Front';
       const testBack = 'New Back';
 
-      test('should return Right(FlashcardModel) when flashcard is created',
-          () async {
-        when(
-          () => mockDataSource.createFlashcard(
+      test(
+        'should return Right(FlashcardModel) when flashcard is created',
+        () async {
+          when(
+            () => mockDataSource.createFlashcard(
+              deckId: testDeckId,
+              front: testFront,
+              back: testBack,
+              isAiGenerated: false,
+            ),
+          ).thenAnswer((_) async => mockFlashcard);
+
+          final result = await repository.createFlashcard(
             deckId: testDeckId,
             front: testFront,
             back: testBack,
-            isAiGenerated: false,
-          ),
-        ).thenAnswer((_) async => mockFlashcard);
+          );
 
-        final result = await repository.createFlashcard(
-          deckId: testDeckId,
-          front: testFront,
-          back: testBack,
-        );
-
-        expect(result, isA<Right<Failure, FlashcardModel>>());
-        result.fold(
-          (failure) => fail('Should not return failure'),
-          (flashcard) {
+          expect(result, isA<Right<Failure, FlashcardModel>>());
+          result.fold((failure) => fail('Should not return failure'), (
+            flashcard,
+          ) {
             expect(flashcard, equals(mockFlashcard));
             expect(flashcard.front, equals(mockFlashcard.front));
-          },
-        );
-      });
+          });
+        },
+      );
 
       test('should pass isAiGenerated parameter correctly', () async {
         when(
@@ -192,7 +210,7 @@ void main() {
               back: testBack,
               isAiGenerated: false,
             ),
-          ).thenThrow(PostgrestException(message: errorMessage));
+          ).thenThrow(const PostgrestException(message: errorMessage));
 
           final result = await repository.createFlashcard(
             deckId: testDeckId,
@@ -204,8 +222,7 @@ void main() {
           result.fold((failure) {
             failure.when(
               failure: (message) => fail('Wrong failure type'),
-              serverFailure: (message) =>
-                  expect(message, equals(errorMessage)),
+              serverFailure: (message) => expect(message, equals(errorMessage)),
               authFailure: (message) => fail('Wrong failure type'),
               invalidCredentialsFailure: (message) =>
                   fail('Wrong failure type'),
@@ -252,8 +269,11 @@ void main() {
           },
         ];
 
-        when(() => mockDataSource.createFlashcards(flashcards: any(named: 'flashcards')))
-            .thenAnswer((_) async => {});
+        when(
+          () => mockDataSource.createFlashcards(
+            flashcards: any(named: 'flashcards'),
+          ),
+        ).thenAnswer((_) async => {});
 
         final result = await repository.createFlashcards(
           deckId: testDeckId,
@@ -266,19 +286,22 @@ void main() {
           (_) => {}, // Success
         );
 
-        final captured = verify(
-          () => mockDataSource.createFlashcards(
-            flashcards: captureAny(named: 'flashcards'),
-          ),
-        ).captured.single as List;
+        final captured =
+            verify(
+                  () => mockDataSource.createFlashcards(
+                    flashcards: captureAny(named: 'flashcards'),
+                  ),
+                ).captured.single
+                as List;
 
         expect(captured.length, equals(2));
         expect(captured, equals(expectedFlashcards));
       });
 
       test('should handle empty candidates list', () async {
-        when(() => mockDataSource.createFlashcards(flashcards: []))
-            .thenAnswer((_) async => {});
+        when(
+          () => mockDataSource.createFlashcards(flashcards: []),
+        ).thenAnswer((_) async => {});
 
         final result = await repository.createFlashcards(
           deckId: testDeckId,
@@ -293,14 +316,14 @@ void main() {
         () async {
           const errorMessage = 'Failed to create flashcards';
           final candidates = [
-            const FlashcardCandidateModel(
-              front: 'Front 1',
-              back: 'Back 1',
-            ),
+            const FlashcardCandidateModel(front: 'Front 1', back: 'Back 1'),
           ];
 
-          when(() => mockDataSource.createFlashcards(flashcards: any(named: 'flashcards')))
-              .thenThrow(PostgrestException(message: errorMessage));
+          when(
+            () => mockDataSource.createFlashcards(
+              flashcards: any(named: 'flashcards'),
+            ),
+          ).thenThrow(const PostgrestException(message: errorMessage));
 
           final result = await repository.createFlashcards(
             deckId: testDeckId,
@@ -311,8 +334,7 @@ void main() {
           result.fold((failure) {
             failure.when(
               failure: (message) => fail('Wrong failure type'),
-              serverFailure: (message) =>
-                  expect(message, equals(errorMessage)),
+              serverFailure: (message) => expect(message, equals(errorMessage)),
               authFailure: (message) => fail('Wrong failure type'),
               invalidCredentialsFailure: (message) =>
                   fail('Wrong failure type'),
@@ -330,43 +352,44 @@ void main() {
       const newFront = 'Updated Front';
       const newBack = 'Updated Back';
 
-      test('should return Right(FlashcardModel) when flashcard is updated',
-          () async {
-        final updatedFlashcard = FlashcardModel(
-          id: testFlashcardId,
-          deckId: 1,
-          front: newFront,
-          back: newBack,
-          isAiGenerated: false,
-          wasModifiedByUser: true,
-          createdAt: DateTime.parse('2024-01-01T00:00:00Z'),
-        );
+      test(
+        'should return Right(FlashcardModel) when flashcard is updated',
+        () async {
+          final updatedFlashcard = FlashcardModel(
+            id: testFlashcardId,
+            deckId: 1,
+            front: newFront,
+            back: newBack,
+            isAiGenerated: false,
+            wasModifiedByUser: true,
+            createdAt: DateTime.parse('2024-01-01T00:00:00Z'),
+          );
 
-        when(
-          () => mockDataSource.updateFlashcard(
+          when(
+            () => mockDataSource.updateFlashcard(
+              flashcardId: testFlashcardId,
+              newFront: newFront,
+              newBack: newBack,
+              wasModifiedByUser: true,
+            ),
+          ).thenAnswer((_) async => updatedFlashcard);
+
+          final result = await repository.updateFlashcard(
             flashcardId: testFlashcardId,
             newFront: newFront,
             newBack: newBack,
-            wasModifiedByUser: true,
-          ),
-        ).thenAnswer((_) async => updatedFlashcard);
+          );
 
-        final result = await repository.updateFlashcard(
-          flashcardId: testFlashcardId,
-          newFront: newFront,
-          newBack: newBack,
-        );
-
-        expect(result, isA<Right<Failure, FlashcardModel>>());
-        result.fold(
-          (failure) => fail('Should not return failure'),
-          (flashcard) {
+          expect(result, isA<Right<Failure, FlashcardModel>>());
+          result.fold((failure) => fail('Should not return failure'), (
+            flashcard,
+          ) {
             expect(flashcard, equals(updatedFlashcard));
             expect(flashcard.front, equals(newFront));
             expect(flashcard.back, equals(newBack));
-          },
-        );
-      });
+          });
+        },
+      );
 
       test('should pass wasModifiedByUser parameter correctly', () async {
         when(
@@ -407,7 +430,7 @@ void main() {
               newBack: newBack,
               wasModifiedByUser: true,
             ),
-          ).thenThrow(PostgrestException(message: errorMessage));
+          ).thenThrow(const PostgrestException(message: errorMessage));
 
           final result = await repository.updateFlashcard(
             flashcardId: testFlashcardId,
@@ -419,8 +442,7 @@ void main() {
           result.fold((failure) {
             failure.when(
               failure: (message) => fail('Wrong failure type'),
-              serverFailure: (message) =>
-                  expect(message, equals(errorMessage)),
+              serverFailure: (message) => expect(message, equals(errorMessage)),
               authFailure: (message) => fail('Wrong failure type'),
               invalidCredentialsFailure: (message) =>
                   fail('Wrong failure type'),
@@ -437,19 +459,22 @@ void main() {
       const testFlashcardId = 1;
 
       test('should return Right(void) when flashcard is deleted', () async {
-        when(() => mockDataSource.deleteFlashcard(flashcardId: testFlashcardId))
-            .thenAnswer((_) async => {});
+        when(
+          () => mockDataSource.deleteFlashcard(flashcardId: testFlashcardId),
+        ).thenAnswer((_) async => {});
 
-        final result =
-            await repository.deleteFlashcard(flashcardId: testFlashcardId);
+        final result = await repository.deleteFlashcard(
+          flashcardId: testFlashcardId,
+        );
 
         expect(result, isA<Right<Failure, void>>());
         result.fold(
           (failure) => fail('Should not return failure'),
           (_) => {}, // Success
         );
-        verify(() => mockDataSource.deleteFlashcard(flashcardId: testFlashcardId))
-            .called(1);
+        verify(
+          () => mockDataSource.deleteFlashcard(flashcardId: testFlashcardId),
+        ).called(1);
       });
 
       test(
@@ -457,18 +482,19 @@ void main() {
         () async {
           const errorMessage = 'Failed to delete flashcard';
 
-          when(() => mockDataSource.deleteFlashcard(flashcardId: testFlashcardId))
-              .thenThrow(PostgrestException(message: errorMessage));
+          when(
+            () => mockDataSource.deleteFlashcard(flashcardId: testFlashcardId),
+          ).thenThrow(const PostgrestException(message: errorMessage));
 
-          final result =
-              await repository.deleteFlashcard(flashcardId: testFlashcardId);
+          final result = await repository.deleteFlashcard(
+            flashcardId: testFlashcardId,
+          );
 
           expect(result, isA<Left<Failure, void>>());
           result.fold((failure) {
             failure.when(
               failure: (message) => fail('Wrong failure type'),
-              serverFailure: (message) =>
-                  expect(message, equals(errorMessage)),
+              serverFailure: (message) => expect(message, equals(errorMessage)),
               authFailure: (message) => fail('Wrong failure type'),
               invalidCredentialsFailure: (message) =>
                   fail('Wrong failure type'),
@@ -482,58 +508,61 @@ void main() {
     });
 
     group('Edge Cases', () {
-      group('TC-FLASHCARD-EDGE-001: Create flashcard with empty front/back',
-          () {
-        test('should handle empty front text', () async {
-          const errorMessage = 'Front cannot be empty';
+      group(
+        'TC-FLASHCARD-EDGE-001: Create flashcard with empty front/back',
+        () {
+          test('should handle empty front text', () async {
+            const errorMessage = 'Front cannot be empty';
 
-          when(
-            () => mockDataSource.createFlashcard(
+            when(
+              () => mockDataSource.createFlashcard(
+                deckId: 1,
+                front: '',
+                back: 'Back',
+                isAiGenerated: false,
+              ),
+            ).thenThrow(const PostgrestException(message: errorMessage));
+
+            final result = await repository.createFlashcard(
               deckId: 1,
               front: '',
               back: 'Back',
-              isAiGenerated: false,
-            ),
-          ).thenThrow(PostgrestException(message: errorMessage));
+            );
 
-          final result = await repository.createFlashcard(
-            deckId: 1,
-            front: '',
-            back: 'Back',
-          );
+            expect(result, isA<Left<Failure, FlashcardModel>>());
+          });
 
-          expect(result, isA<Left<Failure, FlashcardModel>>());
-        });
+          test('should handle empty back text', () async {
+            const errorMessage = 'Back cannot be empty';
 
-        test('should handle empty back text', () async {
-          const errorMessage = 'Back cannot be empty';
+            when(
+              () => mockDataSource.createFlashcard(
+                deckId: 1,
+                front: 'Front',
+                back: '',
+                isAiGenerated: false,
+              ),
+            ).thenThrow(const PostgrestException(message: errorMessage));
 
-          when(
-            () => mockDataSource.createFlashcard(
+            final result = await repository.createFlashcard(
               deckId: 1,
               front: 'Front',
               back: '',
-              isAiGenerated: false,
-            ),
-          ).thenThrow(PostgrestException(message: errorMessage));
+            );
 
-          final result = await repository.createFlashcard(
-            deckId: 1,
-            front: 'Front',
-            back: '',
-          );
+            expect(result, isA<Left<Failure, FlashcardModel>>());
+          });
+        },
+      );
 
-          expect(result, isA<Left<Failure, FlashcardModel>>());
-        });
-      });
-
-      group('TC-FLASHCARD-EDGE-005: Get flashcards for non-existent deck',
-          () {
+      group('TC-FLASHCARD-EDGE-005: Get flashcards for non-existent deck', () {
         test('should return empty list for non-existent deck', () async {
           const nonExistentDeckId = 999;
 
-          when(() => mockDataSource.getFlashcardsForDeck(deckId: nonExistentDeckId))
-              .thenAnswer((_) async => []);
+          when(
+            () =>
+                mockDataSource.getFlashcardsForDeck(deckId: nonExistentDeckId),
+          ).thenAnswer((_) async => []);
 
           final result = await repository.getFlashcardsForDeck(
             deckId: nonExistentDeckId,
@@ -559,7 +588,7 @@ void main() {
               newBack: 'Back',
               wasModifiedByUser: true,
             ),
-          ).thenThrow(PostgrestException(message: errorMessage));
+          ).thenThrow(const PostgrestException(message: errorMessage));
 
           final result = await repository.updateFlashcard(
             flashcardId: nonExistentId,
@@ -575,18 +604,19 @@ void main() {
         test('should handle deleting flashcard that does not exist', () async {
           const nonExistentId = 999;
 
-          when(() => mockDataSource.deleteFlashcard(flashcardId: nonExistentId))
-              .thenAnswer((_) async => {});
+          when(
+            () => mockDataSource.deleteFlashcard(flashcardId: nonExistentId),
+          ).thenAnswer((_) async => {});
 
-          final result =
-              await repository.deleteFlashcard(flashcardId: nonExistentId);
+          final result = await repository.deleteFlashcard(
+            flashcardId: nonExistentId,
+          );
 
           expect(result, isA<Right<Failure, void>>());
         });
       });
 
-      group('TC-FLASHCARD-EDGE-011: Create flashcards with very long text',
-          () {
+      group('TC-FLASHCARD-EDGE-011: Create flashcards with very long text', () {
         test('should handle very long front/back text', () async {
           final longText = 'A' * 10000;
 
@@ -611,4 +641,3 @@ void main() {
     });
   });
 }
-

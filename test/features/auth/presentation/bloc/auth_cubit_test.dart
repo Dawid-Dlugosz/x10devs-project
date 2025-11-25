@@ -223,7 +223,7 @@ void main() {
         () async {
           when(
             () => mockRepository.logout(),
-          ).thenAnswer((_) async => Right(unit));
+          ).thenAnswer((_) async => const Right(unit));
 
           final expected = [
             const app_auth.AuthState.loading(),
@@ -256,7 +256,7 @@ void main() {
       test('should call repository.logout', () async {
         when(
           () => mockRepository.logout(),
-        ).thenAnswer((_) async => Right(unit));
+        ).thenAnswer((_) async => const Right(unit));
 
         await cubit.logout();
 

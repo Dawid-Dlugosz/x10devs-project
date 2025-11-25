@@ -8,10 +8,7 @@ import 'package:x10devs/features/flashcard/presentation/bloc/flashcard_cubit.dar
 import 'package:go_router/go_router.dart';
 
 class ReviewPage extends StatefulWidget {
-  const ReviewPage({
-    super.key,
-    required this.deckId,
-  });
+  const ReviewPage({super.key, required this.deckId});
 
   final String deckId;
 
@@ -94,16 +91,14 @@ class _ReviewPageState extends State<ReviewPage> {
           child: Column(
             children: [
               ShadInputFormField(
-                placeholder: Text('Przód'),
+                placeholder: const Text('Przód'),
                 controller: frontController,
               ),
               const SizedBox(height: 16),
               ShadInputFormField(
                 controller: backController,
-                placeholder:  Text('Tył'),
-                decoration: const ShadDecoration(
-                  
-                ),
+                placeholder: const Text('Tył'),
+                decoration: const ShadDecoration(),
               ),
             ],
           ),
@@ -118,9 +113,9 @@ class _ReviewPageState extends State<ReviewPage> {
       return;
     }
     context.read<FlashcardCubit>().createFlashcards(
-          deckId: int.parse(widget.deckId),
-          candidates: _selectedCandidates.toList(),
-        );
+      deckId: int.parse(widget.deckId),
+      candidates: _selectedCandidates.toList(),
+    );
     context.go('/decks/${widget.deckId}');
   }
 
@@ -133,16 +128,10 @@ class _ReviewPageState extends State<ReviewPage> {
           Row(
             children: [
               const Text('Zaznacz wszystko'),
-              Checkbox(
-                value: _selectAll,
-                onChanged: (_) => _toggleSelectAll(),
-              ),
+              Checkbox(value: _selectAll, onChanged: (_) => _toggleSelectAll()),
             ],
           ),
-          ShadButton(
-            onPressed: _saveSelected,
-            child: const Text('Zapisz'),
-          ),
+          ShadButton(onPressed: _saveSelected, child: const Text('Zapisz')),
         ],
       ),
       body: BlocBuilder<AiGenerationCubit, AiGenerationState>(
@@ -157,7 +146,8 @@ class _ReviewPageState extends State<ReviewPage> {
               }
               if (_candidates.isEmpty) {
                 return const Center(
-                    child: Text('AI nie znalazło żadnych fiszek.'));
+                  child: Text('AI nie znalazło żadnych fiszek.'),
+                );
               }
               return ListView.builder(
                 itemCount: _candidates.length,
@@ -168,7 +158,9 @@ class _ReviewPageState extends State<ReviewPage> {
                     onTap: () => _toggleCandidateSelection(candidate),
                     child: ShadCard(
                       backgroundColor: candidate.wasModified
-                          ? ShadTheme.of(context).colorScheme.primary.withAlpha(25) 
+                          ? ShadTheme.of(
+                              context,
+                            ).colorScheme.primary.withAlpha(25)
                           : null,
                       title: Text(candidate.front),
                       description: Text(candidate.back),
@@ -192,10 +184,7 @@ class _ReviewPageState extends State<ReviewPage> {
                 },
               );
             },
-            error: (failure) => Center(
-              // TODO: Use FlashcardErrorView
-              child: Text('Błąd: ${failure.message}'),
-            ),
+            error: (failure) => Center(child: Text('Błąd: ${failure.message}')),
           );
         },
       ),
