@@ -46,6 +46,7 @@ app.*.map.json
 
 # Environment files with sensitive data
 .env
+.env.test
 .env.local
 .env.*.local
 !.env.example
