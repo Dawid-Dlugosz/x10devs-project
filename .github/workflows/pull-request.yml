@@ -1,0 +1,340 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Create placeholder environment files
+        run: |
+          echo "SUPABASE_URL=placeholder" > .env
+          echo "SUPABASE_ANON_KEY=placeholder" >> .env
+          echo "OPENROUTER_API_KEY=placeholder" >> .env
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Verify formatting
+        run: dart format --set-exit-if-changed .
+
+      - name: Analyze code
+        run: flutter analyze --fatal-infos
+
+      - name: Check for outdated dependencies
+        run: flutter pub outdated
+
+  unit-and-widget-tests:
+    name: Unit & Widget Tests
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Create placeholder environment files
+        run: |
+          echo "SUPABASE_URL=placeholder" > .env
+          echo "SUPABASE_ANON_KEY=placeholder" >> .env
+          echo "OPENROUTER_API_KEY=placeholder" >> .env
+          echo "SUPABASE_URL=placeholder" > .env.test
+          echo "SUPABASE_ANON_KEY=placeholder" >> .env.test
+          echo "OPENROUTER_API_KEY=placeholder" >> .env.test
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Run unit and widget tests with coverage
+        run: flutter test --coverage --reporter expanded
+
+      - name: Upload unit test coverage
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          files: ./coverage/lcov.info
+          flags: unit-widget-tests
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Generate coverage report
+        if: always()
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lcov
+          lcov --summary coverage/lcov.info > coverage-summary.txt || true
+
+      - name: Upload coverage summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-widget-coverage
+          path: coverage-summary.txt
+          retention-days: 5
+
+  e2e-tests:
+    name: E2E Tests
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-34-${{ runner.os }}
+
+      - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Create test environment file
+        run: |
+          echo "SUPABASE_URL=${{ secrets.TEST_SUPABASE_URL }}" > .env.test
+          echo "SUPABASE_ANON_KEY=${{ secrets.TEST_SUPABASE_ANON_KEY }}" >> .env.test
+          echo "OPENROUTER_API_KEY=${{ secrets.TEST_OPENROUTER_API_KEY }}" >> .env.test
+
+      - name: Create placeholder production environment file
+        run: |
+          echo "SUPABASE_URL=placeholder" > .env
+          echo "SUPABASE_ANON_KEY=placeholder" >> .env
+          echo "OPENROUTER_API_KEY=placeholder" >> .env
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Run E2E tests on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            flutter test integration_test --coverage --reporter expanded
+
+      - name: Upload E2E test coverage
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          files: ./coverage/lcov.info
+          flags: e2e-tests
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Generate E2E coverage report
+        if: always()
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lcov
+          lcov --summary coverage/lcov.info > e2e-coverage-summary.txt || true
+
+      - name: Upload E2E coverage summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-coverage
+          path: e2e-coverage-summary.txt
+          retention-days: 5
+
+  status-comment:
+    name: Post Status Comment
+    needs: [lint, unit-and-widget-tests, e2e-tests]
+    runs-on: ubuntu-latest
+    if: always() && needs.lint.result == 'success' && needs.unit-and-widget-tests.result == 'success' && needs.e2e-tests.result == 'success'
+    permissions:
+      pull-requests: write
+    
+    steps:
+      - name: Download unit-widget coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: unit-widget-coverage
+        continue-on-error: true
+
+      - name: Download E2E coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-coverage
+        continue-on-error: true
+
+      - name: Read coverage summaries
+        id: coverage
+        run: |
+          if [ -f coverage-summary.txt ]; then
+            UNIT_COVERAGE=$(cat coverage-summary.txt | grep -oP '\d+\.\d+%' | head -1 || echo "N/A")
+          else
+            UNIT_COVERAGE="N/A"
+          fi
+          
+          if [ -f e2e-coverage-summary.txt ]; then
+            E2E_COVERAGE=$(cat e2e-coverage-summary.txt | grep -oP '\d+\.\d+%' | head -1 || echo "N/A")
+          else
+            E2E_COVERAGE="N/A"
+          fi
+          
+          echo "unit_coverage=$UNIT_COVERAGE" >> $GITHUB_OUTPUT
+          echo "e2e_coverage=$E2E_COVERAGE" >> $GITHUB_OUTPUT
+
+      - name: Post success comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const unitCoverage = '${{ steps.coverage.outputs.unit_coverage }}';
+            const e2eCoverage = '${{ steps.coverage.outputs.e2e_coverage }}';
+            
+            const comment = `## ✅ All CI Checks Passed!
+            
+            ### Test Results Summary
+            
+            | Check | Status | Coverage |
+            |-------|--------|----------|
+            | 🔍 Linting | ✅ Passed | - |
+            | 🧪 Unit & Widget Tests | ✅ Passed | ${unitCoverage} |
+            | 🤖 E2E Tests (Android 14) | ✅ Passed | ${e2eCoverage} |
+            
+            ### Details
+            - **Lint**: Code formatting and static analysis passed
+            - **Unit & Widget Tests**: All unit and widget tests completed successfully
+            - **E2E Tests**: Integration tests ran on Android 14 emulator
+            
+            🎉 Your pull request is ready for review!
+            
+            ---
+            *Generated by GitHub Actions - [View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  status-comment-failure:
+    name: Post Failure Comment
+    needs: [lint, unit-and-widget-tests, e2e-tests]
+    runs-on: ubuntu-latest
+    if: always() && (needs.lint.result == 'failure' || needs.unit-and-widget-tests.result == 'failure' || needs.e2e-tests.result == 'failure')
+    permissions:
+      pull-requests: write
+    
+    steps:
+      - name: Post failure comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const lintStatus = '${{ needs.lint.result }}';
+            const unitStatus = '${{ needs.unit-and-widget-tests.result }}';
+            const e2eStatus = '${{ needs.e2e-tests.result }}';
+            
+            const statusEmoji = (status) => {
+              if (status === 'success') return '✅';
+              if (status === 'failure') return '❌';
+              if (status === 'skipped') return '⏭️';
+              return '⚠️';
+            };
+            
+            const comment = `## ❌ CI Checks Failed
+            
+            ### Test Results Summary
+            
+            | Check | Status |
+            |-------|--------|
+            | 🔍 Linting | ${statusEmoji(lintStatus)} ${lintStatus} |
+            | 🧪 Unit & Widget Tests | ${statusEmoji(unitStatus)} ${unitStatus} |
+            | 🤖 E2E Tests (Android 14) | ${statusEmoji(e2eStatus)} ${e2eStatus} |
+            
+            ### Next Steps
+            ${lintStatus === 'failure' ? '- ❌ **Linting failed**: Please fix code formatting and analysis issues\n' : ''}
+            ${unitStatus === 'failure' ? '- ❌ **Unit/Widget tests failed**: Please review and fix failing tests\n' : ''}
+            ${e2eStatus === 'failure' ? '- ❌ **E2E tests failed**: Please check integration test failures\n' : ''}
+            
+            Please review the failed checks and push fixes to this PR.
+            
+            ---
+            *Generated by GitHub Actions - [View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
