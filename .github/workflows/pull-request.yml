@@ -30,6 +30,9 @@ jobs:
           echo "SUPABASE_URL=placeholder" > .env
           echo "SUPABASE_ANON_KEY=placeholder" >> .env
           echo "OPENROUTER_API_KEY=placeholder" >> .env
+          echo "SUPABASE_URL=placeholder" > .env.test
+          echo "SUPABASE_ANON_KEY=placeholder" >> .env.test
+          echo "OPENROUTER_API_KEY=placeholder" >> .env.test
 
       - name: Run code generation
         run: dart run build_runner build --delete-conflicting-outputs
