@@ -32,14 +32,12 @@ jobs:
       - name: Run tests (unit + widget)
         run: flutter test --coverage
 
-      - name: Create production environment file
-        run: |
-          echo "SUPABASE_URL=${{ secrets.PROD_SUPABASE_URL }}" > .env
-          echo "SUPABASE_ANON_KEY=${{ secrets.PROD_SUPABASE_ANON_KEY }}" >> .env
-          echo "OPENROUTER_API_KEY=${{ secrets.PROD_OPENROUTER_API_KEY }}" >> .env
-
       - name: Build production (web)
-        run: flutter build web --release
+        run: |
+          flutter build web --release \
+            --dart-define=SUPABASE_URL="${{ secrets.PROD_SUPABASE_URL }}" \
+            --dart-define=SUPABASE_ANON_KEY="${{ secrets.PROD_SUPABASE_ANON_KEY }}" \
+            --dart-define=OPENROUTER_API_KEY="${{ secrets.PROD_OPENROUTER_API_KEY }}"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
