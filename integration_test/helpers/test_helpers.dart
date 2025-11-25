@@ -54,10 +54,13 @@ class TestHelpers {
     await tester.tap(
       registerButton.last,
     ); // Use .last to get the button, not the link
-    await tester.pumpAndSettle();
 
-    await tester.pumpAndSettle(const Duration(seconds: 5));
+    // Wait for registration to complete and navigation to happen
+    debugPrint('⏳ Waiting for registration to complete...');
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpAndSettle(const Duration(seconds: 10));
 
+    debugPrint('✅ Registration completed');
     return email;
   }
 
@@ -92,26 +95,29 @@ class TestHelpers {
 
   /// Logs out the current user
   static Future<void> logoutUser(WidgetTester tester) async {
+    debugPrint('🔄 Attempting to logout...');
+    await tester.pumpAndSettle();
+
     // Find and tap logout button/icon
     // Note: Adjust this based on your actual logout UI implementation
     final logoutIcon = find.byIcon(Icons.logout);
     if (logoutIcon.evaluate().isNotEmpty) {
+      debugPrint('✅ Found logout icon');
       await tester.tap(logoutIcon);
-      await tester.pumpAndSettle();
-      // Give router time to redirect
-      await tester.pump(const Duration(seconds: 2));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      debugPrint('✅ Logged out via icon');
       return;
     }
 
     // Alternative: look for logout text button
     final logoutButton = find.text('Wyloguj');
     if (logoutButton.evaluate().isNotEmpty) {
+      debugPrint('✅ Found logout button');
       await tester.tap(logoutButton);
-      await tester.pumpAndSettle();
-      // Give router time to redirect
-      await tester.pump(const Duration(seconds: 2));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      debugPrint('✅ Logged out via button');
       return;
     }
 
@@ -125,12 +131,14 @@ class TestHelpers {
       final logoutInMenu = find.text('Wyloguj');
       if (logoutInMenu.evaluate().isNotEmpty) {
         await tester.tap(logoutInMenu);
-        await tester.pumpAndSettle();
-        // Give router time to redirect
-        await tester.pump(const Duration(seconds: 2));
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(milliseconds: 500));
+        await tester.pumpAndSettle(const Duration(seconds: 3));
+        debugPrint('✅ Logged out via menu');
+        return;
       }
     }
+
+    debugPrint('⚠️ No logout button found - might already be logged out');
   }
 
   /// Cleans up test user and all associated data
@@ -184,7 +192,7 @@ class TestHelpers {
   static Future<void> waitForText(
     WidgetTester tester,
     String text, {
-    Duration timeout = const Duration(seconds: 10),
+    Duration timeout = const Duration(seconds: 3),
   }) async {
     final endTime = DateTime.now().add(timeout);
 
@@ -208,7 +216,7 @@ class TestHelpers {
   static Future<void> waitForWidget(
     WidgetTester tester,
     Finder finder, {
-    Duration timeout = const Duration(seconds: 10),
+    Duration timeout = const Duration(seconds: 3),
   }) async {
     final endTime = DateTime.now().add(timeout);
 
@@ -244,7 +252,17 @@ class TestHelpers {
   }
 
   /// Verifies that user is logged in
-  static void verifyLoggedIn(WidgetTester tester) {
+  static Future<void> verifyLoggedIn(WidgetTester tester) async {
+    // Wait for navigation and page load to complete
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+
+    // Wait for the decks page to appear (with timeout)
+    await waitForText(
+      tester,
+      'Twoje Talie',
+      timeout: const Duration(seconds: 15),
+    );
+
     expect(
       find.text('Twoje Talie'),
       findsOneWidget,
@@ -263,23 +281,66 @@ class TestHelpers {
 
   /// Ensures the app is in a clean state (logged out, on login page)
   static Future<void> ensureLoggedOut(WidgetTester tester) async {
+    debugPrint('🔍 Checking if user is logged out...');
+    await tester.pumpAndSettle(const Duration(seconds: 1));
+
     // Check if we're already on login/register page
     final loginButton = find.text('Zaloguj');
     final registerButton = find.text('Zarejestruj się');
+    final logoutIcon = find.byIcon(Icons.logout);
 
-    if (loginButton.evaluate().isNotEmpty ||
-        registerButton.evaluate().isNotEmpty) {
+    if ((loginButton.evaluate().isNotEmpty ||
+            registerButton.evaluate().isNotEmpty) &&
+        logoutIcon.evaluate().isEmpty) {
       debugPrint('✅ Already on auth page');
       return;
     }
 
     // We're logged in, need to logout
-    debugPrint('🔄 Logging out to reset state...');
+    debugPrint('🔄 User is logged in, logging out...');
     try {
       await logoutUser(tester);
-      await tester.pumpAndSettle(const Duration(seconds: 2));
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      debugPrint('✅ Successfully logged out');
     } catch (e) {
       debugPrint('⚠️ Logout failed (might already be logged out): $e');
     }
+  }
+
+  /// Waits for the decks page to fully load (past loading states)
+  static Future<void> waitForDecksPageToLoad(WidgetTester tester) async {
+    debugPrint('🔄 Waiting for decks page to load...');
+
+    // Wait for initial render and routing
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+
+    // Wait for either the empty state or decks list to appear
+    final endTime = DateTime.now().add(const Duration(seconds: 30));
+
+    while (DateTime.now().isBefore(endTime)) {
+      await tester.pump(const Duration(milliseconds: 200));
+
+      // Check if we see the decks page title in AppBar
+      final titleFinder = find.text('Twoje Talie');
+      if (titleFinder.evaluate().isNotEmpty) {
+        debugPrint('✅ Found "Twoje Talie" title');
+        // Wait for content to stabilize
+        await tester.pumpAndSettle(const Duration(seconds: 2));
+
+        // Verify we're not stuck in loading state
+        final loadingIndicator = find.byType(CircularProgressIndicator);
+        if (loadingIndicator.evaluate().isEmpty) {
+          debugPrint('✅ Decks page fully loaded');
+          return;
+        } else {
+          debugPrint('⏳ Still loading, waiting...');
+        }
+      }
+
+      await Future.delayed(const Duration(milliseconds: 200));
+    }
+
+    debugPrint('❌ Timeout waiting for decks page');
+    throw Exception('Timeout waiting for decks page to load');
   }
 }

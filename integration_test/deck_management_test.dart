@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:x10devs/main.dart' as app;
+import 'test_main.dart' as app;
 
 import 'helpers/test_data.dart';
 import 'helpers/test_helpers.dart';
@@ -30,9 +30,11 @@ void main() {
     testWidgets('TC-E2E-DECK-001: User can create a new deck', (tester) async {
       // Arrange - Register and login
       app.main();
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      await TestHelpers.ensureLoggedOut(tester);
       testEmail = await TestHelpers.registerTestUser(tester);
-      TestHelpers.verifyLoggedIn(tester);
+      await TestHelpers.waitForDecksPageToLoad(tester);
+      await TestHelpers.verifyLoggedIn(tester);
 
       // Act - Create deck
       final deckName = TestData.generateUniqueDeckName();
@@ -74,9 +76,11 @@ void main() {
     ) async {
       // Arrange - Register and login
       app.main();
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      await TestHelpers.ensureLoggedOut(tester);
       testEmail = await TestHelpers.registerTestUser(tester);
-      TestHelpers.verifyLoggedIn(tester);
+      await TestHelpers.waitForDecksPageToLoad(tester);
+      await TestHelpers.verifyLoggedIn(tester);
 
       // Assert - Should show empty state
       expect(
@@ -91,8 +95,10 @@ void main() {
     ) async {
       // Arrange
       app.main();
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      await TestHelpers.ensureLoggedOut(tester);
       testEmail = await TestHelpers.registerTestUser(tester);
+      await TestHelpers.waitForDecksPageToLoad(tester);
 
       // Act - Create 3 decks
       final deckNames = [
@@ -150,8 +156,10 @@ void main() {
     ) async {
       // Arrange - Create a deck
       app.main();
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      await TestHelpers.ensureLoggedOut(tester);
       testEmail = await TestHelpers.registerTestUser(tester);
+      await TestHelpers.waitForDecksPageToLoad(tester);
 
       final deckName = TestData.generateUniqueDeckName();
       await tester.tap(find.byIcon(Icons.add));
@@ -184,8 +192,10 @@ void main() {
     ) async {
       // Arrange
       app.main();
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      await TestHelpers.ensureLoggedOut(tester);
       testEmail = await TestHelpers.registerTestUser(tester);
+      await TestHelpers.waitForDecksPageToLoad(tester);
 
       // Act - Try to create deck with empty name
       await tester.tap(find.byIcon(Icons.add));
@@ -215,8 +225,10 @@ void main() {
       (tester) async {
         // Arrange
         app.main();
-        await tester.pumpAndSettle();
+        await tester.pumpAndSettle(const Duration(seconds: 3));
+        await TestHelpers.ensureLoggedOut(tester);
         testEmail = await TestHelpers.registerTestUser(tester);
+        await TestHelpers.waitForDecksPageToLoad(tester);
 
         // Act - Create deck with special characters
         const deckName = TestData.deckNameWithSpecialChars;
@@ -245,8 +257,10 @@ void main() {
       (tester) async {
         // Arrange
         app.main();
-        await tester.pumpAndSettle();
+        await tester.pumpAndSettle(const Duration(seconds: 3));
+        await TestHelpers.ensureLoggedOut(tester);
         testEmail = await TestHelpers.registerTestUser(tester);
+        await TestHelpers.waitForDecksPageToLoad(tester);
 
         // Act - Create deck with Unicode
         const deckName = TestData.deckNameWithUnicode;
@@ -275,8 +289,10 @@ void main() {
     ) async {
       // Arrange
       app.main();
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      await TestHelpers.ensureLoggedOut(tester);
       testEmail = await TestHelpers.registerTestUser(tester);
+      await TestHelpers.waitForDecksPageToLoad(tester);
 
       // Act - Open dialog and cancel
       await tester.tap(find.byIcon(Icons.add));
@@ -310,8 +326,10 @@ void main() {
     ) async {
       // Arrange - Create a deck
       app.main();
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      await TestHelpers.ensureLoggedOut(tester);
       testEmail = await TestHelpers.registerTestUser(tester);
+      await TestHelpers.waitForDecksPageToLoad(tester);
 
       final deckName = TestData.generateUniqueDeckName();
       await tester.tap(find.byIcon(Icons.add));
@@ -344,8 +362,10 @@ void main() {
     ) async {
       // Arrange
       app.main();
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      await TestHelpers.ensureLoggedOut(tester);
       testEmail = await TestHelpers.registerTestUser(tester);
+      await TestHelpers.waitForDecksPageToLoad(tester);
 
       // Act - Start creating deck
       await tester.tap(find.byIcon(Icons.add));

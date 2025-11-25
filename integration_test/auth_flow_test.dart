@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:x10devs/main.dart' as app;
+import 'test_main.dart' as app;
 
 import 'helpers/test_helpers.dart';
 
@@ -10,11 +10,6 @@ void main() {
 
   group('Authentication Flow E2E Tests', () {
     late String testEmail;
-
-    setUpAll(() async {
-      // Initialize app once for all tests
-      debugPrint('🔧 Setting up test suite...');
-    });
 
     setUp(() async {
       // Each test gets a fresh email
@@ -39,17 +34,17 @@ void main() {
     ) async {
       // Arrange - Start app
       app.main();
-      await tester.pumpAndSettle(const Duration(seconds: 2));
+      await tester.pumpAndSettle(const Duration(seconds: 3));
       await TestHelpers.ensureLoggedOut(tester);
 
       // Act
       final email = await TestHelpers.registerTestUser(tester);
 
-      // Wait for navigation to complete
-      await tester.pumpAndSettle(const Duration(seconds: 3));
+      // Wait for navigation and decks page to load
+      await TestHelpers.waitForDecksPageToLoad(tester);
 
       // Assert
-      TestHelpers.verifyLoggedIn(tester);
+      await TestHelpers.verifyLoggedIn(tester);
 
       testEmail = email; // Save for cleanup
     });
@@ -59,7 +54,7 @@ void main() {
     ) async {
       // Arrange - Start app and register user first
       app.main();
-      await tester.pumpAndSettle(const Duration(seconds: 2));
+      await tester.pumpAndSettle(const Duration(seconds: 3));
       testEmail = await TestHelpers.registerTestUser(tester);
 
       // Logout
@@ -106,7 +101,7 @@ void main() {
     ) async {
       // Arrange - Start app
       app.main();
-      await tester.pumpAndSettle(const Duration(seconds: 2));
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
       // Navigate to login
       final loginLink = find.text('Masz już konto? Zaloguj się');
@@ -132,7 +127,7 @@ void main() {
     ) async {
       // Arrange - Start app
       app.main();
-      await tester.pumpAndSettle(const Duration(seconds: 2));
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
       final loginLink = find.text('Masz już konto? Zaloguj się');
       if (loginLink.evaluate().isNotEmpty) {
@@ -161,7 +156,7 @@ void main() {
     ) async {
       // Arrange - Start app
       app.main();
-      await tester.pumpAndSettle(const Duration(seconds: 2));
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
       final registerLink = find.text('Nie masz konta? Zarejestruj się');
       await tester.tap(registerLink);
@@ -194,7 +189,7 @@ void main() {
     ) async {
       // Arrange - Start app
       app.main();
-      await tester.pumpAndSettle(const Duration(seconds: 2));
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
       final registerLink = find.text('Nie masz konta? Zarejestruj się');
       if (registerLink.evaluate().isNotEmpty) {
