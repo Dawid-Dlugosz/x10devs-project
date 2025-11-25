@@ -1,4 +1,4 @@
-/// Test data constants and generators for E2E tests
+// Test data constants and generators for E2E tests
 
 class TestData {
   // Test user credentials
@@ -102,7 +102,8 @@ The framework is designed to help developers easily achieve 60fps or 120fps on d
       'Hasło musi mieć co najmniej 8 znaków';
   static const String passwordsDoNotMatchError = 'Hasła nie są identyczne';
   static const String deckNameRequiredError = 'Nazwa talii jest wymagana';
-  static const String flashcardFrontRequiredError = 'Przód fiszki jest wymagany';
+  static const String flashcardFrontRequiredError =
+      'Przód fiszki jest wymagany';
   static const String flashcardBackRequiredError = 'Tył fiszki jest wymagany';
   static const String flashcardFrontTooLongError =
       'Przód fiszki może mieć maksymalnie 200 znaków';
@@ -143,4 +144,3 @@ The framework is designed to help developers easily achieve 60fps or 120fps on d
     return 'Answer $timestamp';
   }
 }
-

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_web_plugins/url_strategy.dart';
 // import 'package:shadcn_flutter/shadcn_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -24,6 +25,7 @@ Future<void> main() async {
     anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
+  //test pr
   // runApp(const ShadcnApp(home: MyApp(),)
   runApp(const MyApp());
 }

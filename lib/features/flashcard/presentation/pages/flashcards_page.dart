@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:x10devs/features/decks/presentation/bloc/decks_cubit.dart';
 import 'package:x10devs/features/flashcard/presentation/bloc/ai_generation_cubit.dart';
@@ -96,9 +95,7 @@ class _FlashcardsPageState extends State<FlashcardsPage> {
                 },
               ),
               BlocListener<FlashcardCubit, FlashcardState>(
-                listener: (context, state) {
-                  // TODO: Implement more granular error handling
-                },
+                listener: (context, state) {},
               ),
             ],
             child: BlocBuilder<FlashcardCubit, FlashcardState>(

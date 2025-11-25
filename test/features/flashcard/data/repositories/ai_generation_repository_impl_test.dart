@@ -37,55 +37,63 @@ void main() {
             ),
           ];
 
-          when(() => mockDataSource.generateFlashcardsFromText(text: testText))
-              .thenAnswer((_) async => mockCandidates);
+          when(
+            () => mockDataSource.generateFlashcardsFromText(text: testText),
+          ).thenAnswer((_) async => mockCandidates);
 
-          final result =
-              await repository.generateFlashcardsFromText(text: testText);
+          final result = await repository.generateFlashcardsFromText(
+            text: testText,
+          );
+
+          expect(result, isA<Right<Failure, List<FlashcardCandidateModel>>>());
+          result.fold((failure) => fail('Should not return failure'), (
+            candidates,
+          ) {
+            expect(candidates, equals(mockCandidates));
+            expect(candidates.length, equals(2));
+          });
+          verify(
+            () => mockDataSource.generateFlashcardsFromText(text: testText),
+          ).called(1);
+        },
+      );
+
+      test(
+        'should return Right(empty list) when AI generates no flashcards',
+        () async {
+          when(
+            () => mockDataSource.generateFlashcardsFromText(text: testText),
+          ).thenAnswer((_) async => []);
+
+          final result = await repository.generateFlashcardsFromText(
+            text: testText,
+          );
 
           expect(result, isA<Right<Failure, List<FlashcardCandidateModel>>>());
           result.fold(
             (failure) => fail('Should not return failure'),
-            (candidates) {
-              expect(candidates, equals(mockCandidates));
-              expect(candidates.length, equals(2));
-            },
+            (candidates) => expect(candidates, isEmpty),
           );
-          verify(() => mockDataSource.generateFlashcardsFromText(text: testText))
-              .called(1);
         },
       );
-
-      test('should return Right(empty list) when AI generates no flashcards',
-          () async {
-        when(() => mockDataSource.generateFlashcardsFromText(text: testText))
-            .thenAnswer((_) async => []);
-
-        final result =
-            await repository.generateFlashcardsFromText(text: testText);
-
-        expect(result, isA<Right<Failure, List<FlashcardCandidateModel>>>());
-        result.fold(
-          (failure) => fail('Should not return failure'),
-          (candidates) => expect(candidates, isEmpty),
-        );
-      });
 
       test(
         'should return Left(AIGenerationFailure) when DioException is thrown',
         () async {
           const errorMessage = 'Network error';
 
-          when(() => mockDataSource.generateFlashcardsFromText(text: testText))
-              .thenThrow(
+          when(
+            () => mockDataSource.generateFlashcardsFromText(text: testText),
+          ).thenThrow(
             DioException(
               requestOptions: RequestOptions(path: '/api/generate'),
               message: errorMessage,
             ),
           );
 
-          final result =
-              await repository.generateFlashcardsFromText(text: testText);
+          final result = await repository.generateFlashcardsFromText(
+            text: testText,
+          );
 
           expect(result, isA<Left<Failure, List<FlashcardCandidateModel>>>());
           result.fold((failure) {
@@ -107,15 +115,15 @@ void main() {
       test(
         'should return Left(AIGenerationFailure) with default message when DioException has no message',
         () async {
-          when(() => mockDataSource.generateFlashcardsFromText(text: testText))
-              .thenThrow(
-            DioException(
-              requestOptions: RequestOptions(path: '/api/generate'),
-            ),
+          when(
+            () => mockDataSource.generateFlashcardsFromText(text: testText),
+          ).thenThrow(
+            DioException(requestOptions: RequestOptions(path: '/api/generate')),
           );
 
-          final result =
-              await repository.generateFlashcardsFromText(text: testText);
+          final result = await repository.generateFlashcardsFromText(
+            text: testText,
+          );
 
           expect(result, isA<Left<Failure, List<FlashcardCandidateModel>>>());
           result.fold((failure) {
@@ -134,49 +142,53 @@ void main() {
         },
       );
 
-      test('should return Left(Failure) when generic exception is thrown',
-          () async {
-        const errorMessage = 'Unexpected error';
+      test(
+        'should return Left(Failure) when generic exception is thrown',
+        () async {
+          const errorMessage = 'Unexpected error';
 
-        when(() => mockDataSource.generateFlashcardsFromText(text: testText))
-            .thenThrow(Exception(errorMessage));
+          when(
+            () => mockDataSource.generateFlashcardsFromText(text: testText),
+          ).thenThrow(Exception(errorMessage));
 
-        final result =
-            await repository.generateFlashcardsFromText(text: testText);
-
-        expect(result, isA<Left<Failure, List<FlashcardCandidateModel>>>());
-        result.fold((failure) {
-          failure.when(
-            failure: (message) => expect(message, contains(errorMessage)),
-            serverFailure: (message) => fail('Wrong failure type'),
-            authFailure: (message) => fail('Wrong failure type'),
-            invalidCredentialsFailure: (message) => fail('Wrong failure type'),
-            emailInUseFailure: (message) => fail('Wrong failure type'),
-            sessionExpiredFailure: (message) => fail('Wrong failure type'),
-            aigenerationFailure: (message) => fail('Wrong failure type'),
+          final result = await repository.generateFlashcardsFromText(
+            text: testText,
           );
-        }, (candidates) => fail('Should not return candidates'));
-      });
+
+          expect(result, isA<Left<Failure, List<FlashcardCandidateModel>>>());
+          result.fold((failure) {
+            failure.when(
+              failure: (message) => expect(message, contains(errorMessage)),
+              serverFailure: (message) => fail('Wrong failure type'),
+              authFailure: (message) => fail('Wrong failure type'),
+              invalidCredentialsFailure: (message) =>
+                  fail('Wrong failure type'),
+              emailInUseFailure: (message) => fail('Wrong failure type'),
+              sessionExpiredFailure: (message) => fail('Wrong failure type'),
+              aigenerationFailure: (message) => fail('Wrong failure type'),
+            );
+          }, (candidates) => fail('Should not return candidates'));
+        },
+      );
     });
 
     group('Edge Cases', () {
       group('TC-AI-EDGE-001: Generate flashcards with empty text', () {
         test('should handle empty text input', () async {
           const emptyText = '';
-          const failure = Failure.aigenerationFailure(
-            message: 'Text cannot be empty',
-          );
 
-          when(() => mockDataSource.generateFlashcardsFromText(text: emptyText))
-              .thenThrow(
+          when(
+            () => mockDataSource.generateFlashcardsFromText(text: emptyText),
+          ).thenThrow(
             DioException(
               requestOptions: RequestOptions(path: '/api/generate'),
               message: 'Text cannot be empty',
             ),
           );
 
-          final result =
-              await repository.generateFlashcardsFromText(text: emptyText);
+          final result = await repository.generateFlashcardsFromText(
+            text: emptyText,
+          );
 
           expect(result, isA<Left<Failure, List<FlashcardCandidateModel>>>());
           result.fold((f) {
@@ -199,17 +211,16 @@ void main() {
         test('should handle very long text input', () async {
           final longText = 'A' * 100000;
           final mockCandidates = [
-            const FlashcardCandidateModel(
-              front: 'Question',
-              back: 'Answer',
-            ),
+            const FlashcardCandidateModel(front: 'Question', back: 'Answer'),
           ];
 
-          when(() => mockDataSource.generateFlashcardsFromText(text: longText))
-              .thenAnswer((_) async => mockCandidates);
+          when(
+            () => mockDataSource.generateFlashcardsFromText(text: longText),
+          ).thenAnswer((_) async => mockCandidates);
 
-          final result =
-              await repository.generateFlashcardsFromText(text: longText);
+          final result = await repository.generateFlashcardsFromText(
+            text: longText,
+          );
 
           expect(result, isA<Right<Failure, List<FlashcardCandidateModel>>>());
           result.fold(
@@ -220,37 +231,41 @@ void main() {
       });
 
       group('TC-AI-EDGE-003: Handle AI timeout', () {
-        test('should map timeout DioException to AIGenerationFailure',
-            () async {
-          const testText = 'Test text';
+        test(
+          'should map timeout DioException to AIGenerationFailure',
+          () async {
+            const testText = 'Test text';
 
-          when(() => mockDataSource.generateFlashcardsFromText(text: testText))
-              .thenThrow(
-            DioException(
-              requestOptions: RequestOptions(path: '/api/generate'),
-              type: DioExceptionType.connectionTimeout,
-              message: 'Connection timeout',
-            ),
-          );
-
-          final result =
-              await repository.generateFlashcardsFromText(text: testText);
-
-          expect(result, isA<Left<Failure, List<FlashcardCandidateModel>>>());
-          result.fold((failure) {
-            failure.when(
-              failure: (message) => fail('Wrong failure type'),
-              serverFailure: (message) => fail('Wrong failure type'),
-              authFailure: (message) => fail('Wrong failure type'),
-              invalidCredentialsFailure: (message) =>
-                  fail('Wrong failure type'),
-              emailInUseFailure: (message) => fail('Wrong failure type'),
-              sessionExpiredFailure: (message) => fail('Wrong failure type'),
-              aigenerationFailure: (message) =>
-                  expect(message, contains('timeout')),
+            when(
+              () => mockDataSource.generateFlashcardsFromText(text: testText),
+            ).thenThrow(
+              DioException(
+                requestOptions: RequestOptions(path: '/api/generate'),
+                type: DioExceptionType.connectionTimeout,
+                message: 'Connection timeout',
+              ),
             );
-          }, (candidates) => fail('Should not return candidates'));
-        });
+
+            final result = await repository.generateFlashcardsFromText(
+              text: testText,
+            );
+
+            expect(result, isA<Left<Failure, List<FlashcardCandidateModel>>>());
+            result.fold((failure) {
+              failure.when(
+                failure: (message) => fail('Wrong failure type'),
+                serverFailure: (message) => fail('Wrong failure type'),
+                authFailure: (message) => fail('Wrong failure type'),
+                invalidCredentialsFailure: (message) =>
+                    fail('Wrong failure type'),
+                emailInUseFailure: (message) => fail('Wrong failure type'),
+                sessionExpiredFailure: (message) => fail('Wrong failure type'),
+                aigenerationFailure: (message) =>
+                    expect(message, contains('timeout')),
+              );
+            }, (candidates) => fail('Should not return candidates'));
+          },
+        );
       });
 
       group('TC-AI-EDGE-004: Handle invalid API response', () {
@@ -258,11 +273,13 @@ void main() {
           const testText = 'Test text';
           const errorMessage = 'Invalid response format';
 
-          when(() => mockDataSource.generateFlashcardsFromText(text: testText))
-              .thenThrow(Exception(errorMessage));
+          when(
+            () => mockDataSource.generateFlashcardsFromText(text: testText),
+          ).thenThrow(Exception(errorMessage));
 
-          final result =
-              await repository.generateFlashcardsFromText(text: testText);
+          final result = await repository.generateFlashcardsFromText(
+            text: testText,
+          );
 
           expect(result, isA<Left<Failure, List<FlashcardCandidateModel>>>());
           result.fold((failure) {
@@ -284,8 +301,9 @@ void main() {
         test('should handle 429 rate limit error', () async {
           const testText = 'Test text';
 
-          when(() => mockDataSource.generateFlashcardsFromText(text: testText))
-              .thenThrow(
+          when(
+            () => mockDataSource.generateFlashcardsFromText(text: testText),
+          ).thenThrow(
             DioException(
               requestOptions: RequestOptions(path: '/api/generate'),
               response: Response(
@@ -296,8 +314,9 @@ void main() {
             ),
           );
 
-          final result =
-              await repository.generateFlashcardsFromText(text: testText);
+          final result = await repository.generateFlashcardsFromText(
+            text: testText,
+          );
 
           expect(result, isA<Left<Failure, List<FlashcardCandidateModel>>>());
           result.fold((failure) {
@@ -327,20 +346,21 @@ void main() {
             ),
           );
 
-          when(() => mockDataSource.generateFlashcardsFromText(text: testText))
-              .thenAnswer((_) async => manyCandidates);
+          when(
+            () => mockDataSource.generateFlashcardsFromText(text: testText),
+          ).thenAnswer((_) async => manyCandidates);
 
-          final result =
-              await repository.generateFlashcardsFromText(text: testText);
+          final result = await repository.generateFlashcardsFromText(
+            text: testText,
+          );
 
           expect(result, isA<Right<Failure, List<FlashcardCandidateModel>>>());
-          result.fold(
-            (failure) => fail('Should not return failure'),
-            (candidates) {
-              expect(candidates.length, equals(100));
-              expect(candidates, equals(manyCandidates));
-            },
-          );
+          result.fold((failure) => fail('Should not return failure'), (
+            candidates,
+          ) {
+            expect(candidates.length, equals(100));
+            expect(candidates, equals(manyCandidates));
+          });
         });
       });
 
@@ -348,8 +368,9 @@ void main() {
         test('should handle connection error', () async {
           const testText = 'Test text';
 
-          when(() => mockDataSource.generateFlashcardsFromText(text: testText))
-              .thenThrow(
+          when(
+            () => mockDataSource.generateFlashcardsFromText(text: testText),
+          ).thenThrow(
             DioException(
               requestOptions: RequestOptions(path: '/api/generate'),
               type: DioExceptionType.connectionError,
@@ -357,8 +378,9 @@ void main() {
             ),
           );
 
-          final result =
-              await repository.generateFlashcardsFromText(text: testText);
+          final result = await repository.generateFlashcardsFromText(
+            text: testText,
+          );
 
           expect(result, isA<Left<Failure, List<FlashcardCandidateModel>>>());
           result.fold((failure) {
@@ -387,11 +409,13 @@ void main() {
             ),
           ];
 
-          when(() => mockDataSource.generateFlashcardsFromText(text: specialText))
-              .thenAnswer((_) async => mockCandidates);
+          when(
+            () => mockDataSource.generateFlashcardsFromText(text: specialText),
+          ).thenAnswer((_) async => mockCandidates);
 
-          final result =
-              await repository.generateFlashcardsFromText(text: specialText);
+          final result = await repository.generateFlashcardsFromText(
+            text: specialText,
+          );
 
           expect(result, isA<Right<Failure, List<FlashcardCandidateModel>>>());
           result.fold(
@@ -403,4 +427,3 @@ void main() {
     });
   });
 }
-

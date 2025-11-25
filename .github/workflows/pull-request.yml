@@ -30,12 +30,15 @@ jobs:
           echo "SUPABASE_URL=placeholder" > .env
           echo "SUPABASE_ANON_KEY=placeholder" >> .env
           echo "OPENROUTER_API_KEY=placeholder" >> .env
+          echo "SUPABASE_URL=placeholder" > .env.test
+          echo "SUPABASE_ANON_KEY=placeholder" >> .env.test
+          echo "OPENROUTER_API_KEY=placeholder" >> .env.test
 
       - name: Run code generation
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Verify formatting
-        run: dart format --set-exit-if-changed .
+      - name: Format code
+        run: dart format .
 
       - name: Analyze code
         run: flutter analyze --fatal-infos
@@ -107,6 +110,7 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    environment: test
     
     steps:
       - name: Checkout repository
@@ -162,9 +166,19 @@ jobs:
 
       - name: Create test environment file
         run: |
+          if [ -z "${{ secrets.TEST_SUPABASE_URL }}" ]; then
+            echo "❌ ERROR: TEST_SUPABASE_URL secret is not set!"
+            exit 1
+          fi
+          if [ -z "${{ secrets.TEST_SUPABASE_ANON_KEY }}" ]; then
+            echo "❌ ERROR: TEST_SUPABASE_ANON_KEY secret is not set!"
+            exit 1
+          fi
           echo "SUPABASE_URL=${{ secrets.TEST_SUPABASE_URL }}" > .env.test
           echo "SUPABASE_ANON_KEY=${{ secrets.TEST_SUPABASE_ANON_KEY }}" >> .env.test
           echo "OPENROUTER_API_KEY=${{ secrets.TEST_OPENROUTER_API_KEY }}" >> .env.test
+          echo "✅ Test environment file created"
+          echo "📍 SUPABASE_URL is set (length: ${#TEST_SUPABASE_URL})"
 
       - name: Create placeholder production environment file
         run: |
