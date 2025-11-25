@@ -165,9 +165,19 @@ jobs:
 
       - name: Create test environment file
         run: |
+          if [ -z "${{ secrets.TEST_SUPABASE_URL }}" ]; then
+            echo "❌ ERROR: TEST_SUPABASE_URL secret is not set!"
+            exit 1
+          fi
+          if [ -z "${{ secrets.TEST_SUPABASE_ANON_KEY }}" ]; then
+            echo "❌ ERROR: TEST_SUPABASE_ANON_KEY secret is not set!"
+            exit 1
+          fi
           echo "SUPABASE_URL=${{ secrets.TEST_SUPABASE_URL }}" > .env.test
           echo "SUPABASE_ANON_KEY=${{ secrets.TEST_SUPABASE_ANON_KEY }}" >> .env.test
           echo "OPENROUTER_API_KEY=${{ secrets.TEST_OPENROUTER_API_KEY }}" >> .env.test
+          echo "✅ Test environment file created"
+          echo "📍 SUPABASE_URL is set (length: ${#TEST_SUPABASE_URL})"
 
       - name: Create placeholder production environment file
         run: |
