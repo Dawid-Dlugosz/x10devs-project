@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:x10devs/features/decks/data/models/deck_model.dart';
 import 'package:x10devs/features/decks/domain/repositories/decks_repository.dart';
 import 'package:x10devs/features/decks/presentation/bloc/decks_state.dart';
 

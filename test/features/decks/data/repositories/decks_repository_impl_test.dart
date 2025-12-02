@@ -32,19 +32,17 @@ void main() {
       test('should return Right(List<DeckModel>) when successful', () async {
         final mockDecks = [mockDeck];
 
-        when(() => mockDataSource.getDecks())
-            .thenAnswer((_) async => mockDecks);
+        when(
+          () => mockDataSource.getDecks(),
+        ).thenAnswer((_) async => mockDecks);
 
         final result = await repository.getDecks();
 
         expect(result, isA<Right<Failure, List<DeckModel>>>());
-        result.fold(
-          (failure) => fail('Should not return failure'),
-          (decks) {
-            expect(decks, equals(mockDecks));
-            expect(decks.length, equals(1));
-          },
-        );
+        result.fold((failure) => fail('Should not return failure'), (decks) {
+          expect(decks, equals(mockDecks));
+          expect(decks.length, equals(1));
+        });
         verify(() => mockDataSource.getDecks()).called(1);
       });
 
@@ -65,9 +63,9 @@ void main() {
         () async {
           const errorMessage = 'Database error';
 
-          when(() => mockDataSource.getDecks()).thenThrow(
-            PostgrestException(message: errorMessage),
-          );
+          when(
+            () => mockDataSource.getDecks(),
+          ).thenThrow(const PostgrestException(message: errorMessage));
 
           final result = await repository.getDecks();
 
@@ -76,8 +74,7 @@ void main() {
             expect(failure, isA<Failure>());
             failure.when(
               failure: (message) => fail('Wrong failure type'),
-              serverFailure: (message) =>
-                  expect(message, equals(errorMessage)),
+              serverFailure: (message) => expect(message, equals(errorMessage)),
               authFailure: (message) => fail('Wrong failure type'),
               invalidCredentialsFailure: (message) =>
                   fail('Wrong failure type'),
@@ -93,32 +90,32 @@ void main() {
     group('createDeck', () {
       const testDeckName = 'New Test Deck';
 
-      test('should return Right(DeckModel) when deck is created successfully',
-          () async {
-        when(() => mockDataSource.createDeck(name: testDeckName))
-            .thenAnswer((_) async => mockDeck);
+      test(
+        'should return Right(DeckModel) when deck is created successfully',
+        () async {
+          when(
+            () => mockDataSource.createDeck(name: testDeckName),
+          ).thenAnswer((_) async => mockDeck);
 
-        final result = await repository.createDeck(name: testDeckName);
+          final result = await repository.createDeck(name: testDeckName);
 
-        expect(result, isA<Right<Failure, DeckModel>>());
-        result.fold(
-          (failure) => fail('Should not return failure'),
-          (deck) {
+          expect(result, isA<Right<Failure, DeckModel>>());
+          result.fold((failure) => fail('Should not return failure'), (deck) {
             expect(deck, equals(mockDeck));
             expect(deck.name, equals(mockDeck.name));
-          },
-        );
-        verify(() => mockDataSource.createDeck(name: testDeckName)).called(1);
-      });
+          });
+          verify(() => mockDataSource.createDeck(name: testDeckName)).called(1);
+        },
+      );
 
       test(
         'should return Left(ServerFailure) when PostgrestException is thrown',
         () async {
           const errorMessage = 'Deck name already exists';
 
-          when(() => mockDataSource.createDeck(name: testDeckName)).thenThrow(
-            PostgrestException(message: errorMessage),
-          );
+          when(
+            () => mockDataSource.createDeck(name: testDeckName),
+          ).thenThrow(const PostgrestException(message: errorMessage));
 
           final result = await repository.createDeck(name: testDeckName);
 
@@ -126,8 +123,7 @@ void main() {
           result.fold((failure) {
             failure.when(
               failure: (message) => fail('Wrong failure type'),
-              serverFailure: (message) =>
-                  expect(message, equals(errorMessage)),
+              serverFailure: (message) => expect(message, equals(errorMessage)),
               authFailure: (message) => fail('Wrong failure type'),
               invalidCredentialsFailure: (message) =>
                   fail('Wrong failure type'),
@@ -144,37 +140,36 @@ void main() {
       const testDeckId = 1;
       const newDeckName = 'Updated Deck Name';
 
-      test('should return Right(DeckModel) when deck is updated successfully',
-          () async {
-        final updatedDeck = DeckModel(
-          id: testDeckId,
-          userId: 'test-user-id',
-          name: newDeckName,
-          flashcardCount: 5,
-          createdAt: DateTime.parse('2024-01-01T00:00:00Z'),
-        );
+      test(
+        'should return Right(DeckModel) when deck is updated successfully',
+        () async {
+          final updatedDeck = DeckModel(
+            id: testDeckId,
+            userId: 'test-user-id',
+            name: newDeckName,
+            flashcardCount: 5,
+            createdAt: DateTime.parse('2024-01-01T00:00:00Z'),
+          );
 
-        when(
-          () => mockDataSource.updateDeck(
+          when(
+            () => mockDataSource.updateDeck(
+              deckId: testDeckId,
+              newName: newDeckName,
+            ),
+          ).thenAnswer((_) async => updatedDeck);
+
+          final result = await repository.updateDeck(
             deckId: testDeckId,
             newName: newDeckName,
-          ),
-        ).thenAnswer((_) async => updatedDeck);
+          );
 
-        final result = await repository.updateDeck(
-          deckId: testDeckId,
-          newName: newDeckName,
-        );
-
-        expect(result, isA<Right<Failure, DeckModel>>());
-        result.fold(
-          (failure) => fail('Should not return failure'),
-          (deck) {
+          expect(result, isA<Right<Failure, DeckModel>>());
+          result.fold((failure) => fail('Should not return failure'), (deck) {
             expect(deck, equals(updatedDeck));
             expect(deck.name, equals(newDeckName));
-          },
-        );
-      });
+          });
+        },
+      );
 
       test(
         'should return Left(ServerFailure) when PostgrestException is thrown',
@@ -186,7 +181,7 @@ void main() {
               deckId: testDeckId,
               newName: newDeckName,
             ),
-          ).thenThrow(PostgrestException(message: errorMessage));
+          ).thenThrow(const PostgrestException(message: errorMessage));
 
           final result = await repository.updateDeck(
             deckId: testDeckId,
@@ -197,8 +192,7 @@ void main() {
           result.fold((failure) {
             failure.when(
               failure: (message) => fail('Wrong failure type'),
-              serverFailure: (message) =>
-                  expect(message, equals(errorMessage)),
+              serverFailure: (message) => expect(message, equals(errorMessage)),
               authFailure: (message) => fail('Wrong failure type'),
               invalidCredentialsFailure: (message) =>
                   fail('Wrong failure type'),
@@ -214,28 +208,32 @@ void main() {
     group('deleteDeck', () {
       const testDeckId = 1;
 
-      test('should return Right(void) when deck is deleted successfully',
-          () async {
-        when(() => mockDataSource.deleteDeck(deckId: testDeckId))
-            .thenAnswer((_) async => {});
+      test(
+        'should return Right(void) when deck is deleted successfully',
+        () async {
+          when(
+            () => mockDataSource.deleteDeck(deckId: testDeckId),
+          ).thenAnswer((_) async => {});
 
-        final result = await repository.deleteDeck(deckId: testDeckId);
+          final result = await repository.deleteDeck(deckId: testDeckId);
 
-        expect(result, isA<Right<Failure, void>>());
-        result.fold(
-          (failure) => fail('Should not return failure'),
-          (_) => {}, // Success - void return
-        );
-        verify(() => mockDataSource.deleteDeck(deckId: testDeckId)).called(1);
-      });
+          expect(result, isA<Right<Failure, void>>());
+          result.fold(
+            (failure) => fail('Should not return failure'),
+            (_) => {}, // Success - void return
+          );
+          verify(() => mockDataSource.deleteDeck(deckId: testDeckId)).called(1);
+        },
+      );
 
       test(
         'should return Left(ServerFailure) when PostgrestException is thrown',
         () async {
           const errorMessage = 'Failed to delete deck';
 
-          when(() => mockDataSource.deleteDeck(deckId: testDeckId))
-              .thenThrow(PostgrestException(message: errorMessage));
+          when(
+            () => mockDataSource.deleteDeck(deckId: testDeckId),
+          ).thenThrow(const PostgrestException(message: errorMessage));
 
           final result = await repository.deleteDeck(deckId: testDeckId);
 
@@ -243,8 +241,7 @@ void main() {
           result.fold((failure) {
             failure.when(
               failure: (message) => fail('Wrong failure type'),
-              serverFailure: (message) =>
-                  expect(message, equals(errorMessage)),
+              serverFailure: (message) => expect(message, equals(errorMessage)),
               authFailure: (message) => fail('Wrong failure type'),
               invalidCredentialsFailure: (message) =>
                   fail('Wrong failure type'),
@@ -263,8 +260,9 @@ void main() {
           const duplicateName = 'Existing Deck';
           const errorMessage = 'duplicate key value violates unique constraint';
 
-          when(() => mockDataSource.createDeck(name: duplicateName))
-              .thenThrow(PostgrestException(message: errorMessage));
+          when(
+            () => mockDataSource.createDeck(name: duplicateName),
+          ).thenThrow(const PostgrestException(message: errorMessage));
 
           final result = await repository.createDeck(name: duplicateName);
 
@@ -298,8 +296,9 @@ void main() {
             ),
           );
 
-          when(() => mockDataSource.getDecks())
-              .thenAnswer((_) async => largeList);
+          when(
+            () => mockDataSource.getDecks(),
+          ).thenAnswer((_) async => largeList);
 
           final result = await repository.getDecks();
 
@@ -313,9 +312,9 @@ void main() {
 
       group('TC-REPO-DECK-004: Handle timeout exception', () {
         test('should map timeout to ServerFailure', () async {
-          when(() => mockDataSource.getDecks()).thenThrow(
-            PostgrestException(message: 'Connection timeout'),
-          );
+          when(
+            () => mockDataSource.getDecks(),
+          ).thenThrow(const PostgrestException(message: 'Connection timeout'));
 
           final result = await repository.getDecks();
 
@@ -323,8 +322,7 @@ void main() {
           result.fold((failure) {
             failure.when(
               failure: (message) => fail('Wrong failure type'),
-              serverFailure: (message) =>
-                  expect(message, contains('timeout')),
+              serverFailure: (message) => expect(message, contains('timeout')),
               authFailure: (message) => fail('Wrong failure type'),
               invalidCredentialsFailure: (message) =>
                   fail('Wrong failure type'),
@@ -347,7 +345,7 @@ void main() {
               deckId: nonExistentId,
               newName: newName,
             ),
-          ).thenThrow(PostgrestException(message: errorMessage));
+          ).thenThrow(const PostgrestException(message: errorMessage));
 
           final result = await repository.updateDeck(
             deckId: nonExistentId,
@@ -362,8 +360,9 @@ void main() {
         test('should handle deleting deck that does not exist', () async {
           const nonExistentId = 999;
 
-          when(() => mockDataSource.deleteDeck(deckId: nonExistentId))
-              .thenAnswer((_) async => {});
+          when(
+            () => mockDataSource.deleteDeck(deckId: nonExistentId),
+          ).thenAnswer((_) async => {});
 
           final result = await repository.deleteDeck(deckId: nonExistentId);
 
@@ -373,4 +372,3 @@ void main() {
     });
   });
 }
-

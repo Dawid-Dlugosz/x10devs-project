@@ -8,7 +8,6 @@ import 'package:x10devs/features/decks/presentation/bloc/decks_state.dart';
 import 'package:x10devs/features/decks/presentation/widgets/decks_list_widget.dart';
 import 'package:x10devs/features/decks/presentation/widgets/dialogs/create_or_edit_deck_dialog.dart';
 import 'package:x10devs/features/decks/presentation/widgets/empty_decks_view.dart';
-import 'package:x10devs/injectable_config.dart';
 import 'package:go_router/go_router.dart';
 
 class DecksPage extends StatefulWidget {
